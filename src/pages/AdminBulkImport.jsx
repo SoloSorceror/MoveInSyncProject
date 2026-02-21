@@ -60,10 +60,10 @@ export default function AdminBulkImport() {
     const hasErrors = DUMMY_PREVIEW_DATA.some(d => d.status === 'error');
 
     return (
-        <div className="max-w-5xl mx-auto space-y-8 animate-fade-in">
+        <div className="max-w-5xl mx-auto space-y-6">
             <div>
-                <h1 className="text-2xl font-bold text-slate-800 dark:text-white mb-2">Bulk Import Network Data</h1>
-                <p className="text-slate-500 dark:text-slate-400">
+                <h1 className="text-2xl font-black text-[#003087] mb-1">Bulk Import Network Data</h1>
+                <p className="text-gray-500 text-sm">
                     Upload CSV or JSON files to rapidly generate or update metro lines and station sequences.
                 </p>
             </div>
@@ -71,14 +71,14 @@ export default function AdminBulkImport() {
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
 
                 {/* Upload Zone */}
-                <div className="col-span-1 border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 rounded-3xl p-6 shadow-sm flex flex-col items-center justify-center text-center">
+                <div className="col-span-1 border border-gray-200 bg-white rounded-2xl p-6 shadow-sm flex flex-col items-center justify-center text-center">
 
                     <form
                         onDragEnter={handleDrag}
                         onDragLeave={handleDrag}
                         onDragOver={handleDrag}
                         onDrop={handleDrop}
-                        className={`w-full aspect-square border-2 border-dashed rounded-2xl flex flex-col items-center justify-center p-6 transition-colors ${dragActive ? 'border-indigo-500 bg-indigo-50 dark:bg-indigo-500/10' : 'border-slate-300 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800/50'
+                        className={`w-full aspect-square border-2 border-dashed rounded-2xl flex flex-col items-center justify-center p-6 transition-colors ${dragActive ? 'border-[#003087] bg-blue-50' : 'border-gray-300 hover:bg-gray-50'
                             }`}
                     >
                         <input
@@ -89,19 +89,19 @@ export default function AdminBulkImport() {
                             onChange={handleFileChange}
                         />
                         <label htmlFor="file-upload" className="cursor-pointer flex flex-col items-center">
-                            <UploadCloud size={48} className={`mb-4 ${dragActive ? 'text-indigo-500' : 'text-slate-400'}`} />
-                            <p className="font-semibold text-slate-700 dark:text-slate-200 mb-1">
-                                Click or drag file to this area to upload
+                            <UploadCloud size={48} className={`mb-4 ${dragActive ? 'text-[#003087]' : 'text-gray-400'}`} />
+                            <p className="font-bold text-gray-700 mb-1">
+                                Click or drag file to upload
                             </p>
-                            <p className="text-sm text-slate-500 dark:text-slate-400">
-                                Support for a single or bulk CSV/JSON upload.
+                            <p className="text-sm text-gray-400">
+                                Supports CSV and JSON formats
                             </p>
 
                             <div className="flex gap-4 mt-6">
-                                <span className="flex items-center gap-1.5 text-xs font-semibold text-slate-500 bg-slate-100 dark:bg-slate-800 px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700">
+                                <span className="flex items-center gap-1.5 text-xs font-semibold text-gray-500 bg-gray-100 px-3 py-1.5 rounded-lg border border-gray-200">
                                     <FileText size={14} /> CSV
                                 </span>
-                                <span className="flex items-center gap-1.5 text-xs font-semibold text-slate-500 bg-slate-100 dark:bg-slate-800 px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700">
+                                <span className="flex items-center gap-1.5 text-xs font-semibold text-gray-500 bg-gray-100 px-3 py-1.5 rounded-lg border border-gray-200">
                                     <FileJson size={14} /> JSON
                                 </span>
                             </div>
@@ -111,18 +111,18 @@ export default function AdminBulkImport() {
                 </div>
 
                 {/* Preview & Validation Table */}
-                <div className="col-span-1 lg:col-span-2 border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 rounded-3xl p-6 shadow-sm flex flex-col">
-                    <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-slate-100 dark:border-slate-800 pb-4 mb-4">
+                <div className="col-span-1 lg:col-span-2 border border-gray-200 bg-white rounded-2xl p-6 shadow-sm flex flex-col">
+                    <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-gray-100 pb-4 mb-4">
                         <div>
-                            <h3 className="text-lg font-bold text-slate-800 dark:text-white">Validation Preview</h3>
-                            <p className="text-sm text-slate-500">Review constraints before committing changes.</p>
+                            <h3 className="text-base font-black text-gray-800">Validation Preview</h3>
+                            <p className="text-sm text-gray-400">Review constraints before committing changes.</p>
                         </div>
 
                         {fileStatus === 'uploaded' && (
                             <button
                                 onClick={simulateImport}
                                 disabled={hasErrors}
-                                className="flex items-center gap-2 px-5 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-semibold transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-md shadow-indigo-600/20"
+                                className="flex items-center gap-2 px-5 py-2 bg-[#003087] hover:bg-blue-900 text-white rounded-xl font-bold transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-md"
                             >
                                 <Play size={16} />
                                 {hasErrors ? 'Fix errors to Import' : 'Commence Import'}

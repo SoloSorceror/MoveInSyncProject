@@ -1,324 +1,326 @@
-import { useState } from 'react';
-import { TransformWrapper, TransformComponent } from 'react-zoom-pan-pinch';
-import { motion, AnimatePresence } from 'framer-motion';
-import { ZoomIn, ZoomOut, Maximize, MapPin, TrainTrack, Info, CornerDownRight, CornerUpRight } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
-import { DUMMY_STATIONS } from '@/data/dummyData';
+import { useState } from 'react'
+import { TransformWrapper, TransformComponent } from 'react-zoom-pan-pinch'
+import { motion, AnimatePresence } from 'framer-motion'
+import { ZoomIn, ZoomOut, Maximize, MapPin, Train, Info, X, Navigation, MousePointer } from 'lucide-react'
+import { useNavigate } from 'react-router-dom'
+import { DUMMY_STATIONS } from '@/data/dummyData'
+
+/* ── Line config ─────────────────────────────────────────────── */
+const LINES = [
+    { id: 'All', label: 'All Lines', activeCls: 'bg-[#003087] text-white' },
+    { id: 'Yellow Line', label: 'Yellow', activeCls: 'bg-yellow-500 text-white', dot: '#D97706' },
+    { id: 'Blue Line', label: 'Blue', activeCls: 'bg-blue-600 text-white', dot: '#2563EB' },
+    { id: 'Red Line', label: 'Red', activeCls: 'bg-[#D7231A] text-white', dot: '#D7231A' },
+    { id: 'Magenta Line', label: 'Magenta', activeCls: 'bg-fuchsia-600 text-white', dot: '#C026D3' },
+    { id: 'Orange Line', label: 'Orange', activeCls: 'bg-orange-500 text-white', dot: '#EA580C' },
+]
 
 export default function NetworkMap() {
-    const navigate = useNavigate();
-    const [activeLine, setActiveLine] = useState('All');
-    const [selectedStation, setSelectedStation] = useState(null);
+    const navigate = useNavigate()
+    const [activeLine, setActiveLine] = useState('All')
+    const [selectedStation, setSelectedStation] = useState(null)
+    const [mapActive, setMapActive] = useState(false)
 
-    const lines = [
-        { id: 'All', color: 'bg-slate-800 text-white dark:bg-slate-200 dark:text-slate-900' },
-        { id: 'Yellow Line', color: 'bg-yellow-500 text-white' },
-        { id: 'Blue Line', color: 'bg-blue-500 text-white' },
-        { id: 'Red Line', color: 'bg-red-500 text-white' },
-        { id: 'Magenta Line', color: 'bg-fuchsia-600 text-white' },
-        { id: 'Orange Line', color: 'bg-orange-500 text-white' },
-    ];
 
     return (
-        <div className="flex flex-col min-h-[90vh] bg-slate-50 dark:bg-slate-950">
-            {/* Header Section */}
-            <div className="relative w-full h-[200px] md:h-[250px] bg-slate-900 overflow-hidden flex flex-col items-center justify-center">
-                <div className="absolute inset-0 bg-gradient-to-r from-metro-dark via-metro-primary/90 to-metro-dark opacity-95"></div>
-                <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1541818780709-a4176840d252?q=80&w=2070&auto=format&fit=crop')] bg-cover bg-center mix-blend-overlay opacity-40"></div>
-                <div className="absolute bottom-0 left-0 w-full h-16 bg-gradient-to-t from-slate-50 dark:from-slate-950 to-transparent"></div>
+        <div className="flex flex-col min-h-[90vh] bg-gray-50">
+
+            {/* ── Tricolor strip */}
+            <div className="flex h-1">
+                <div className="flex-1 bg-[#D7231A]" />
+                <div className="flex-1 bg-white border-y border-gray-200" />
+                <div className="flex-1 bg-[#00873D]" />
+            </div>
+
+            {/* ── Page Banner */}
+            <div className="relative w-full bg-[#003087] overflow-hidden">
+                <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1541818780709-a4176840d252?q=80&w=2070&auto=format&fit=crop')] bg-cover bg-center mix-blend-overlay opacity-20" />
+                <div className="absolute bottom-0 left-0 w-full h-10 bg-gradient-to-t from-gray-50 to-transparent" />
 
                 <motion.div
-                    initial={{ opacity: 0, y: -20 }}
+                    initial={{ opacity: 0, y: -16 }}
                     animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.6 }}
-                    className="relative z-10 text-center px-4 -mt-10 md:-mt-16"
+                    transition={{ duration: 0.5 }}
+                    className="relative z-10 text-center py-8 px-4"
                 >
-                    <h1 className="text-4xl md:text-5xl font-extrabold text-white tracking-tight mb-3 drop-shadow-lg">
-                        Live <span className="text-blue-200">Network Map</span>
+                    <span className="inline-block text-[10px] font-black tracking-[0.2em] text-blue-300 uppercase mb-3">
+                        🚇 Interactive Network Map
+                    </span>
+                    <h1 className="text-3xl md:text-4xl font-black text-white mb-2">
+                        Metro <span className="text-yellow-300">Network</span>
                     </h1>
-                    <p className="text-blue-50 text-base md:text-xl font-medium max-w-2xl mx-auto drop-shadow-md">
-                        Explore routes, find interchanges, and plan your journey visually.
+                    <p className="text-blue-200 text-sm max-w-lg mx-auto">
+                        Explore routes, find interchange stations and plan your journey visually.
                     </p>
                 </motion.div>
             </div>
 
-            {/* Main Interactive Map Layout */}
-            <div className="px-4 sm:px-6 lg:px-8 w-full max-w-[1400px] 2xl:max-w-[1600px] mx-auto -mt-12 md:-mt-16 relative z-30 pb-12 flex flex-col lg:flex-row gap-6">
+            {/* ── Main layout */}
+            <div className="px-4 sm:px-6 lg:px-8 max-w-[1400px] mx-auto w-full py-6">
+                <div className="flex flex-col lg:flex-row gap-5">
 
-                {/* Left Side: Controls & Legend Box */}
-                <div className="w-full lg:w-[320px] shrink-0 flex flex-col gap-6">
-                    {/* Filter Card */}
-                    <motion.div
-                        initial={{ opacity: 0, x: -20 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        transition={{ delay: 0.2 }}
-                        className="bg-white dark:bg-slate-900 rounded-3xl shadow-xl p-6 border border-slate-200 dark:border-slate-800 backdrop-blur-xl"
-                    >
-                        <h3 className="text-xl font-bold text-slate-800 dark:text-white mb-4 flex items-center gap-2">
-                            <TrainTrack className="text-metro-primary" /> Filter Lines
-                        </h3>
-                        <div className="flex flex-col gap-2">
-                            {lines.map((line) => (
-                                <button
-                                    key={line.id}
-                                    onClick={() => setActiveLine(line.id)}
-                                    className={`w-full text-left px-5 py-3 rounded-2xl font-bold text-sm transition-all flex items-center gap-3 ${activeLine === line.id
-                                        ? line.color + ' shadow-lg border-transparent scale-[1.02]'
-                                        : 'bg-slate-50 dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-700'
-                                        }`}
+                    {/* ── Left Panel: Filters ─────────────────────────── */}
+                    <div className="w-full lg:w-[280px] shrink-0 space-y-5">
+
+                        {/* Line Filter */}
+                        <motion.div
+                            initial={{ opacity: 0, x: -16 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            className="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden"
+                        >
+                            <div className="flex items-center gap-2 px-4 py-3 bg-[#003087]">
+                                <Train size={15} className="text-blue-300" />
+                                <h3 className="font-black text-white text-sm">Filter Lines</h3>
+                            </div>
+                            <div className="p-3 space-y-1.5">
+                                {LINES.map(line => (
+                                    <button key={line.id} onClick={() => setActiveLine(line.id)}
+                                        className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl font-bold text-sm transition-all ${activeLine === line.id
+                                            ? line.activeCls + ' shadow-sm'
+                                            : 'text-gray-600 hover:bg-gray-100 bg-gray-50 border border-gray-200'
+                                            }`}>
+                                        {line.dot && <span className="w-3 h-3 rounded-full flex-shrink-0" style={{ backgroundColor: activeLine === line.id ? 'rgba(255,255,255,0.7)' : line.dot }} />}
+                                        {!line.dot && <Train size={13} className={activeLine === line.id ? 'text-white/70' : 'text-gray-400'} />}
+                                        {line.label}
+                                    </button>
+                                ))}
+                            </div>
+                        </motion.div>
+
+                        {/* Station Info card */}
+                        <AnimatePresence mode="wait">
+                            {selectedStation ? (
+                                <motion.div
+                                    key="selected"
+                                    initial={{ opacity: 0, y: 10 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    exit={{ opacity: 0, y: 10 }}
+                                    className="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden"
                                 >
-                                    {line.id !== 'All' && (
-                                        <div className={`w-3 h-3 rounded-full bg-white/80 shadow-inner block`}></div>
-                                    )}
-                                    {line.id}
-                                </button>
-                            ))}
-                        </div>
-                    </motion.div>
-
-                    {/* Station Info Card (appears when a node is clicked) */}
-                    <AnimatePresence>
-                        {selectedStation && (
-                            <motion.div
-                                initial={{ opacity: 0, height: 0, y: 20 }}
-                                animate={{ opacity: 1, height: 'auto', y: 0 }}
-                                exit={{ opacity: 0, height: 0, y: -20 }}
-                                className="bg-gradient-to-br from-metro-primary to-blue-800 rounded-3xl shadow-xl p-6 border border-white/10 text-white overflow-hidden"
-                            >
-                                <h3 className="text-2xl font-black mb-1">{selectedStation.name}</h3>
-                                <p className="text-blue-100 text-sm font-medium mb-4 flex items-center gap-1">
-                                    <MapPin size={16} /> {selectedStation.isInterchange ? 'Interchange Hub' : 'Standard Station'}
-                                </p>
-
-                                <div className="bg-white/10 rounded-2xl p-4 mb-4 backdrop-blur-sm">
-                                    <p className="text-xs text-blue-200 font-bold mb-2 uppercase tracking-wider">Connecting Lines</p>
-                                    <div className="flex flex-wrap gap-2">
-                                        {/* Extremely basic mock connection rendering */}
-                                        <span className={`px-2 py-1 rounded-md text-xs font-bold ${selectedStation.line.includes('Yellow') ? 'bg-yellow-500' : selectedStation.line.includes('Blue') ? 'bg-blue-500' : selectedStation.line.includes('Red') ? 'bg-red-500' : 'bg-slate-500'}`}>
-                                            {selectedStation.line}
-                                        </span>
+                                    <div className="flex items-center gap-2 px-4 py-3 bg-[#D7231A]">
+                                        <MapPin size={14} className="text-white" />
+                                        <h3 className="font-black text-white text-sm flex-1 truncate">{selectedStation.name}</h3>
+                                        <button onClick={() => setSelectedStation(null)} className="text-white/60 hover:text-white transition-colors">
+                                            <X size={15} />
+                                        </button>
+                                    </div>
+                                    <div className="p-4 space-y-3">
+                                        <div className="flex items-center gap-2 text-sm">
+                                            <span className="w-3 h-3 rounded-full flex-shrink-0" style={{ backgroundColor: selectedStation.line?.includes('Yellow') ? '#D97706' : selectedStation.line?.includes('Blue') ? '#2563EB' : selectedStation.line?.includes('Red') ? '#D7231A' : '#64748B' }} />
+                                            <span className="font-bold text-gray-700">{selectedStation.line}</span>
+                                        </div>
                                         {selectedStation.isInterchange && (
-                                            <span className="px-2 py-1 rounded-md text-xs font-bold bg-white/20">
-                                                + Other Lines
-                                            </span>
+                                            <div className="bg-blue-50 border border-blue-100 rounded-xl px-3 py-2 text-xs font-bold text-[#003087]">
+                                                🔄 Interchange Station
+                                            </div>
                                         )}
+                                        <button
+                                            onClick={() => navigate('/')}
+                                            className="w-full flex items-center justify-center gap-2 py-2.5 bg-[#003087] text-white rounded-xl font-bold text-sm hover:bg-blue-900 transition-colors"
+                                        >
+                                            <Navigation size={14} /> Plan from here
+                                        </button>
                                     </div>
-                                </div>
-
-                                <div className="flex flex-col gap-2">
-                                    <button
-                                        onClick={() => navigate('/', { state: { setOriginAs: selectedStation } })}
-                                        className="w-full py-3 bg-white text-metro-primary font-bold rounded-xl hover:bg-blue-50 transition-colors shadow-lg active:scale-95 flex items-center justify-center gap-2"
-                                    >
-                                        <CornerUpRight size={18} /> Book From Here
-                                    </button>
-                                    <button
-                                        onClick={() => navigate('/', { state: { setDestAs: selectedStation } })}
-                                        className="w-full py-3 bg-transparent border-2 border-white/50 text-white font-bold rounded-xl hover:bg-white/10 transition-colors active:scale-95 flex items-center justify-center gap-2"
-                                    >
-                                        <CornerDownRight size={18} /> Book To Here
-                                    </button>
-                                </div>
-                            </motion.div>
-                        )}
-                    </AnimatePresence>
-
-                    {/* Quick Legend */}
-                    <div className="hidden lg:flex flex-col gap-3 bg-slate-100 dark:bg-slate-900/50 p-5 rounded-3xl border border-slate-200 dark:border-slate-800">
-                        <h4 className="font-bold text-slate-800 dark:text-white text-sm flex items-center gap-2"><Info size={16} /> Map Legend</h4>
-                        <div className="flex items-center gap-3 text-sm text-slate-600 dark:text-slate-400 font-medium">
-                            <div className="w-5 h-5 rounded-full border-4 border-slate-400 bg-white"></div>
-                            Standard Station
-                        </div>
-                        <div className="flex items-center gap-3 text-sm text-slate-600 dark:text-slate-400 font-medium">
-                            <div className="w-6 h-6 rounded-full border-[6px] border-slate-800 dark:border-white bg-white dark:bg-slate-900"></div>
-                            Interchange Hub
-                        </div>
-                    </div>
-                </div>
-
-                {/* Right Side: Vast Interactive Map Canvas */}
-                <motion.div
-                    initial={{ opacity: 0, scale: 0.98 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    transition={{ delay: 0.3 }}
-                    className="flex-1 min-w-0 bg-white dark:bg-slate-900 rounded-[2rem] shadow-2xl overflow-hidden border border-slate-200 dark:border-slate-800 h-[600px] lg:h-[700px] relative group"
-                >
-                    {/* Draggable Warning Overlay */}
-                    <div className="absolute top-6 left-1/2 -translate-x-1/2 z-20 bg-slate-900/80 backdrop-blur-md text-white px-6 py-2 rounded-full text-sm font-bold shadow-2xl opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none flex items-center gap-2">
-                        Use Buttons/Pinch to Zoom • Drag to Pan
-                    </div>
-
-                    <TransformWrapper
-                        initialScale={0.55}
-                        minScale={0.25}
-                        maxScale={5}
-                        centerOnInit={true}
-                        wheel={{ step: 0.08 }}
-                        limitToBounds={false}
-                        doubleClick={{ mode: 'zoomIn', step: 0.5 }}
-                    >
-                        {({ zoomIn, zoomOut, resetTransform }) => (
-                            <>
-                                <div className="absolute right-6 bottom-6 z-20 flex flex-col gap-3 p-3 rounded-2xl bg-white/90 dark:bg-slate-800/90 backdrop-blur-md border border-slate-200 dark:border-slate-700 shadow-xl">
-                                    <button onClick={() => zoomIn(0.3)} aria-label="Zoom in" className="p-3 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-xl transition-colors">
-                                        <ZoomIn size={22} className="text-slate-700 dark:text-slate-300" />
-                                    </button>
-                                    <div className="w-full h-px bg-slate-200 dark:bg-slate-700" />
-                                    <button onClick={() => zoomOut(0.3)} aria-label="Zoom out" className="p-3 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-xl transition-colors">
-                                        <ZoomOut size={22} className="text-slate-700 dark:text-slate-300" />
-                                    </button>
-                                    <div className="w-full h-px bg-slate-200 dark:bg-slate-700" />
-                                    <button onClick={() => resetTransform()} aria-label="Reset view" className="p-3 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-xl transition-colors">
-                                        <Maximize size={22} className="text-slate-700 dark:text-slate-300" />
-                                    </button>
-                                </div>
-
-                                <TransformComponent
-                                    wrapperClass="!w-full !h-full bg-[#f8fafc] dark:bg-[#020617] cursor-grab active:cursor-grabbing"
-                                    contentClass="flex items-center justify-center"
+                                </motion.div>
+                            ) : (
+                                <motion.div
+                                    key="empty"
+                                    initial={{ opacity: 0 }}
+                                    animate={{ opacity: 1 }}
+                                    exit={{ opacity: 0 }}
+                                    className="bg-white rounded-2xl border border-gray-200 overflow-hidden"
                                 >
-                                    <div className="w-[1200px] h-[900px]">
-                                        <svg width="100%" height="100%" viewBox="0 0 1200 900" className="opacity-95 drop-shadow-sm">
-
-                                            {/* Yellow Line (N-S) */}
-                                            <path
-                                                d="M 600 100 L 600 800"
-                                                stroke="#eab308"
-                                                strokeWidth="14"
-                                                fill="none"
-                                                strokeLinecap="round"
-                                                strokeLinejoin="round"
-                                                className={`transition-opacity duration-300 ${activeLine !== 'All' && activeLine !== 'Yellow Line' ? 'opacity-10' : 'opacity-100'}`}
-                                            />
-
-                                            {/* Blue Line (E-W) */}
-                                            <path
-                                                d="M 100 450 L 1100 450"
-                                                stroke="#3b82f6"
-                                                strokeWidth="14"
-                                                fill="none"
-                                                strokeLinecap="round"
-                                                strokeLinejoin="round"
-                                                className={`transition-opacity duration-300 ${activeLine !== 'All' && activeLine !== 'Blue Line' ? 'opacity-10' : 'opacity-100'}`}
-                                            />
-
-                                            {/* Red Line */}
-                                            <path
-                                                d="M 200 200 L 600 200 L 1000 100"
-                                                stroke="#ef4444"
-                                                strokeWidth="14"
-                                                fill="none"
-                                                strokeLinecap="round"
-                                                strokeLinejoin="round"
-                                                className={`transition-opacity duration-300 ${activeLine !== 'All' && activeLine !== 'Red Line' ? 'opacity-10' : 'opacity-100'}`}
-                                            />
-
-                                            {/* Magenta Line */}
-                                            <path
-                                                d="M 200 700 L 600 600 L 1000 700"
-                                                stroke="#c026d3"
-                                                strokeWidth="12"
-                                                fill="none"
-                                                strokeLinecap="round"
-                                                strokeLinejoin="round"
-                                                className={`transition-opacity duration-300 ${activeLine !== 'All' && activeLine !== 'Magenta Line' ? 'opacity-10' : 'opacity-100'}`}
-                                            />
-
-                                            {/* Orange Line (Airport Express) */}
-                                            <path
-                                                d="M 600 450 L 400 550 L 150 750"
-                                                stroke="#f97316"
-                                                strokeWidth="12"
-                                                fill="none"
-                                                strokeLinecap="round"
-                                                strokeLinejoin="round"
-                                                className={`transition-opacity duration-300 ${activeLine !== 'All' && activeLine !== 'Orange Line' ? 'opacity-10' : 'opacity-100'}`}
-                                            />
-
-                                            {/* Standard Nodes (Yellow Line) */}
-                                            <g className="cursor-pointer hover:opacity-80 transition-opacity" onClick={() => setSelectedStation(DUMMY_STATIONS.find(s => s.name === 'Majlis Park') || { name: 'Majlis Park', line: 'Yellow Line', isInterchange: false })}>
-                                                <circle cx="600" cy="100" r="12" fill="white" stroke="#eab308" strokeWidth="6" />
-                                                <text x="625" y="105" className="fill-slate-800 dark:fill-slate-200 font-bold font-sans text-base hover:fill-metro-primary">Majlis Park (N)</text>
-                                            </g>
-
-                                            <g className="cursor-pointer hover:opacity-80 transition-opacity" onClick={() => setSelectedStation(DUMMY_STATIONS.find(s => s.name === 'Chandni Chowk'))}>
-                                                <circle cx="600" cy="270" r="12" fill="white" stroke="#eab308" strokeWidth="6" />
-                                                <text x="625" y="275" className="fill-slate-800 dark:fill-slate-200 font-bold font-sans text-base">Chandni Chowk</text>
-                                            </g>
-
-                                            <g className="cursor-pointer hover:opacity-80 transition-opacity" onClick={() => setSelectedStation(DUMMY_STATIONS.find(s => s.name === 'Chawri Bazar'))}>
-                                                <circle cx="600" cy="330" r="12" fill="white" stroke="#eab308" strokeWidth="6" />
-                                                <text x="625" y="335" className="fill-slate-800 dark:fill-slate-200 font-bold font-sans text-base">Chawri Bazar</text>
-                                            </g>
-
-                                            <g className="cursor-pointer hover:opacity-80 transition-opacity" onClick={() => setSelectedStation(DUMMY_STATIONS.find(s => s.name === 'HUDA City Centre'))}>
-                                                <circle cx="600" cy="800" r="12" fill="white" stroke="#eab308" strokeWidth="6" />
-                                                <text x="625" y="805" className="fill-slate-800 dark:fill-slate-200 font-bold font-sans text-base">HUDA City Centre</text>
-                                            </g>
-
-                                            {/* Standard Nodes (Blue Line) */}
-                                            <g className="cursor-pointer hover:opacity-80 transition-opacity" onClick={() => setSelectedStation(DUMMY_STATIONS.find(s => s.name === 'Dwarka Sector 21'))}>
-                                                <circle cx="100" cy="450" r="12" fill="white" stroke="#3b82f6" strokeWidth="6" />
-                                                <text x="100" y="420" className="fill-slate-800 dark:fill-slate-200 font-bold font-sans text-base" textAnchor="middle">Dwarka Sec 21</text>
-                                            </g>
-
-                                            <g className="cursor-pointer hover:opacity-80 transition-opacity" onClick={() => setSelectedStation({ name: 'Noida Electronic City', line: 'Blue Line', isInterchange: false })}>
-                                                <circle cx="1100" cy="450" r="12" fill="white" stroke="#3b82f6" strokeWidth="6" />
-                                                <text x="1100" y="420" className="fill-slate-800 dark:fill-slate-200 font-bold font-sans text-base" textAnchor="middle">Noida Electronic City</text>
-                                            </g>
-
-                                            {/* Interchange Nodes */}
-                                            {/* Kashmere Gate (Red/Yellow) */}
-                                            <g className="cursor-pointer group" onClick={() => setSelectedStation(DUMMY_STATIONS.find(s => s.name === 'Kashmere Gate'))}>
-                                                <circle cx="600" cy="200" r="20" fill="white" stroke="#0f172a" strokeWidth="8" className="dark:stroke-white dark:fill-slate-900 group-hover:scale-110 transition-transform origin-[600px_200px]" />
-                                                <text x="635" y="195" className="fill-slate-900 dark:fill-white font-black font-sans text-xl">Kashmere Gate</text>
-                                            </g>
-
-                                            {/* Rajiv Chowk (Yellow/Blue) */}
-                                            <g className="cursor-pointer group" onClick={() => setSelectedStation(DUMMY_STATIONS.find(s => s.name === 'Rajiv Chowk'))}>
-                                                <circle cx="600" cy="450" r="24" fill="white" stroke="#0f172a" strokeWidth="10" className="dark:stroke-white dark:fill-slate-900 animate-pulse-slow shadow-xl group-hover:scale-110 transition-transform origin-[600px_450px]" />
-                                                <text x="640" y="470" className="fill-slate-900 dark:fill-white font-black font-sans text-2xl drop-shadow-md">Rajiv Chowk</text>
-                                            </g>
-
-                                            {/* New Delhi (Yellow/Orange) */}
-                                            <g className="cursor-pointer group" onClick={() => setSelectedStation(DUMMY_STATIONS.find(s => s.name === 'New Delhi'))}>
-                                                <circle cx="600" cy="500" r="20" fill="white" stroke="#0f172a" strokeWidth="8" className="dark:stroke-white dark:fill-slate-900 group-hover:scale-110 transition-transform origin-[600px_500px]" />
-                                                <text x="635" y="505" className="fill-slate-900 dark:fill-white font-black font-sans text-lg">New Delhi</text>
-                                            </g>
-
-                                            {/* Hauz Khas (Yellow/Magenta) */}
-                                            <g className="cursor-pointer group" onClick={() => setSelectedStation(DUMMY_STATIONS.find(s => s.name === 'Hauz Khas'))}>
-                                                <circle cx="600" cy="625" r="20" fill="white" stroke="#0f172a" strokeWidth="8" className="dark:stroke-white dark:fill-slate-900 group-hover:scale-110 transition-transform origin-[600px_625px]" />
-                                                <text x="635" y="630" className="fill-slate-900 dark:fill-white font-black font-sans text-lg">Hauz Khas</text>
-                                            </g>
-
-                                            {/* Janakpuri West (Blue/Magenta) */}
-                                            <g className="cursor-pointer group" onClick={() => setSelectedStation(DUMMY_STATIONS.find(s => s.name === 'Janakpuri West'))}>
-                                                <circle cx="200" cy="450" r="18" fill="white" stroke="#0f172a" strokeWidth="7" className="dark:stroke-white dark:fill-slate-900 group-hover:scale-110 transition-transform origin-[200px_450px]" />
-                                                <text x="180" y="485" className="fill-slate-900 dark:fill-white font-black font-sans text-base" textAnchor="middle">Janakpuri West</text>
-                                            </g>
-
-                                            {/* Botanical Garden (Blue/Magenta) */}
-                                            <g className="cursor-pointer group" onClick={() => setSelectedStation(DUMMY_STATIONS.find(s => s.name === 'Botanical Garden'))}>
-                                                <circle cx="900" cy="450" r="18" fill="white" stroke="#0f172a" strokeWidth="7" className="dark:stroke-white dark:fill-slate-900 group-hover:scale-110 transition-transform origin-[900px_450px]" />
-                                                <text x="920" y="485" className="fill-slate-900 dark:fill-white font-black font-sans text-base" textAnchor="middle">Botanical Garden</text>
-                                            </g>
-
-                                            {/* Airport */}
-                                            <g className="cursor-pointer group" onClick={() => setSelectedStation(DUMMY_STATIONS.find(s => s.name === 'Airport (T3)'))}>
-                                                <circle cx="150" cy="750" r="16" fill="white" stroke="#f97316" strokeWidth="7" className="group-hover:scale-110 transition-transform origin-[150px_750px]" />
-                                                <text x="175" y="755" className="fill-slate-900 dark:fill-white font-black font-sans text-base drop-shadow-sm">Airport (T3)</text>
-                                            </g>
-
-                                        </svg>
+                                    <div className="flex items-center gap-2 px-4 py-3 border-b border-gray-100">
+                                        <Info size={14} className="text-[#00873D]" />
+                                        <h3 className="font-black text-gray-800 text-sm">Map Legend</h3>
                                     </div>
-                                </TransformComponent>
-                            </>
-                        )}
-                    </TransformWrapper>
-                </motion.div >
-            </div >
-        </div >
-    );
+                                    <div className="p-4 space-y-2.5">
+                                        <div className="flex items-center gap-3 text-sm text-gray-600">
+                                            <div className="w-4 h-4 rounded-full border-[3px] border-gray-400 bg-white flex-shrink-0" />
+                                            <span className="font-semibold">Standard Station</span>
+                                        </div>
+                                        <div className="flex items-center gap-3 text-sm text-gray-600">
+                                            <div className="w-5 h-5 rounded-full border-[4px] border-[#003087] bg-white flex-shrink-0" />
+                                            <span className="font-semibold">Interchange Hub</span>
+                                        </div>
+                                        <div className="flex items-center gap-3 text-sm text-gray-600">
+                                            <div className="w-5 h-5 rounded-full border-[4px] border-[#D7231A] bg-white flex-shrink-0" />
+                                            <span className="font-semibold">Major Interchange</span>
+                                        </div>
+                                        <p className="text-xs text-gray-400 pt-1 font-medium">Click any station node to view details.</p>
+                                    </div>
+                                </motion.div>
+                            )}
+                        </AnimatePresence>
+                    </div>
+
+                    {/* ── Map Canvas ──────────────────────────────────── */}
+                    <motion.div
+                        initial={{ opacity: 0, scale: 0.98 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        transition={{ delay: 0.2 }}
+                        className="flex-1 min-w-0 bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden h-[580px] lg:h-[680px] relative"
+                        onBlur={() => setMapActive(false)}
+                        tabIndex={-1}
+                    >
+                        {/* Click-to-activate overlay */}
+                        <AnimatePresence>
+                            {!mapActive && (
+                                <motion.button
+                                    initial={{ opacity: 0 }}
+                                    animate={{ opacity: 1 }}
+                                    exit={{ opacity: 0 }}
+                                    onClick={() => setMapActive(true)}
+                                    className="absolute inset-0 z-30 bg-black/10 flex flex-col items-center justify-center gap-3 cursor-pointer focus:outline-none"
+                                >
+                                    <div className="bg-white/95 backdrop-blur-sm rounded-2xl shadow-xl px-6 py-4 flex flex-col items-center gap-2 border border-gray-200">
+                                        <MousePointer size={22} className="text-[#003087]" />
+                                        <p className="font-black text-[#003087] text-sm">Click to interact with map</p>
+                                        <p className="text-gray-400 text-xs">Scroll to zoom · Drag to pan</p>
+                                    </div>
+                                </motion.button>
+                            )}
+                        </AnimatePresence>
+
+                        <TransformWrapper
+                            initialScale={0.55}
+                            minScale={0.25}
+                            maxScale={5}
+                            centerOnInit={true}
+                            wheel={{ step: 0.08, disabled: !mapActive }}
+                            panning={{ disabled: !mapActive }}
+                            limitToBounds={false}
+                            doubleClick={{ mode: 'zoomIn', step: 0.5 }}
+                        >
+                            {({ zoomIn, zoomOut, resetTransform }) => (
+                                <>
+                                    {/* Zoom Controls */}
+                                    <div className="absolute right-5 bottom-5 z-20 flex flex-col gap-2 p-2.5 rounded-xl bg-white border border-gray-200 shadow-md">
+                                        <button onClick={() => zoomIn(0.3)} aria-label="Zoom in" className="p-2 hover:bg-gray-100 rounded-lg transition-colors">
+                                            <ZoomIn size={18} className="text-[#003087]" />
+                                        </button>
+                                        <div className="w-full h-px bg-gray-200" />
+                                        <button onClick={() => zoomOut(0.3)} aria-label="Zoom out" className="p-2 hover:bg-gray-100 rounded-lg transition-colors">
+                                            <ZoomOut size={18} className="text-[#003087]" />
+                                        </button>
+                                        <div className="w-full h-px bg-gray-200" />
+                                        <button onClick={() => resetTransform()} aria-label="Reset" className="p-2 hover:bg-gray-100 rounded-lg transition-colors">
+                                            <Maximize size={18} className="text-[#003087]" />
+                                        </button>
+                                    </div>
+
+                                    <TransformComponent
+                                        wrapperClass="!w-full !h-full bg-gray-50 cursor-grab active:cursor-grabbing"
+                                        contentClass="flex items-center justify-center"
+                                    >
+                                        <div className="w-[1200px] h-[900px]">
+                                            <svg width="100%" height="100%" viewBox="0 0 1200 900">
+
+                                                {/* Yellow Line N-S */}
+                                                <path d="M 600 100 L 600 800" stroke="#D97706" strokeWidth="12" fill="none" strokeLinecap="round"
+                                                    className={`transition-opacity duration-300 ${activeLine !== 'All' && activeLine !== 'Yellow Line' ? 'opacity-8' : 'opacity-100'}`} />
+
+                                                {/* Blue Line E-W */}
+                                                <path d="M 100 450 L 1100 450" stroke="#2563EB" strokeWidth="12" fill="none" strokeLinecap="round"
+                                                    className={`transition-opacity duration-300 ${activeLine !== 'All' && activeLine !== 'Blue Line' ? 'opacity-8' : 'opacity-100'}`} />
+
+                                                {/* Red Line */}
+                                                <path d="M 200 200 L 600 200 L 1000 100" stroke="#D7231A" strokeWidth="12" fill="none" strokeLinecap="round"
+                                                    className={`transition-opacity duration-300 ${activeLine !== 'All' && activeLine !== 'Red Line' ? 'opacity-8' : 'opacity-100'}`} />
+
+                                                {/* Magenta Line */}
+                                                <path d="M 200 700 L 600 600 L 1000 700" stroke="#C026D3" strokeWidth="10" fill="none" strokeLinecap="round"
+                                                    className={`transition-opacity duration-300 ${activeLine !== 'All' && activeLine !== 'Magenta Line' ? 'opacity-8' : 'opacity-100'}`} />
+
+                                                {/* Orange Line (Airport) */}
+                                                <path d="M 600 450 L 400 550 L 150 750" stroke="#EA580C" strokeWidth="10" fill="none" strokeLinecap="round"
+                                                    className={`transition-opacity duration-300 ${activeLine !== 'All' && activeLine !== 'Orange Line' ? 'opacity-8' : 'opacity-100'}`} />
+
+                                                {/* ── Standard Nodes: Yellow Line ── */}
+                                                {[
+                                                    { cx: 600, cy: 100, stroke: '#D97706', label: 'Majlis Park', tx: 625, ty: 105, anchor: 'start' },
+                                                    { cx: 600, cy: 270, stroke: '#D97706', label: 'Chandni Chowk', tx: 625, ty: 275, anchor: 'start' },
+                                                    { cx: 600, cy: 330, stroke: '#D97706', label: 'Chawri Bazar', tx: 625, ty: 335, anchor: 'start' },
+                                                    { cx: 600, cy: 800, stroke: '#D97706', label: 'HUDA City Centre', tx: 625, ty: 805, anchor: 'start' },
+                                                ].map(s => (
+                                                    <g key={s.label} className="cursor-pointer hover:opacity-75 transition-opacity"
+                                                        onClick={() => setSelectedStation(DUMMY_STATIONS.find(st => st.name === s.label) || { name: s.label, line: 'Yellow Line', isInterchange: false })}>
+                                                        <circle cx={s.cx} cy={s.cy} r="11" fill="white" stroke={s.stroke} strokeWidth="5" />
+                                                        <text x={s.tx} y={s.ty} fill="#1e293b" fontWeight="700" fontSize="13" fontFamily="Inter,sans-serif" textAnchor={s.anchor}>{s.label}</text>
+                                                    </g>
+                                                ))}
+
+                                                {/* ── Standard Nodes: Blue Line ── */}
+                                                {[
+                                                    { cx: 100, cy: 450, stroke: '#2563EB', label: 'Dwarka Sec 21', tx: 100, ty: 425, anchor: 'middle' },
+                                                    { cx: 1100, cy: 450, stroke: '#2563EB', label: 'Noida Electronic City', tx: 1100, ty: 425, anchor: 'middle' },
+                                                ].map(s => (
+                                                    <g key={s.label} className="cursor-pointer hover:opacity-75 transition-opacity"
+                                                        onClick={() => setSelectedStation({ name: s.label, line: 'Blue Line', isInterchange: false })}>
+                                                        <circle cx={s.cx} cy={s.cy} r="11" fill="white" stroke={s.stroke} strokeWidth="5" />
+                                                        <text x={s.tx} y={s.ty} fill="#1e293b" fontWeight="700" fontSize="13" fontFamily="Inter,sans-serif" textAnchor={s.anchor}>{s.label}</text>
+                                                    </g>
+                                                ))}
+
+                                                {/* ── Airport (Orange) ── */}
+                                                <g className="cursor-pointer group"
+                                                    onClick={() => setSelectedStation(DUMMY_STATIONS.find(s => s.name === 'Airport (T3)') || { name: 'Airport (T3)', line: 'Orange Line', isInterchange: false })}>
+                                                    <circle cx="150" cy="750" r="14" fill="white" stroke="#EA580C" strokeWidth="6" className="group-hover:scale-110 transition-transform origin-[150px_750px]" />
+                                                    <text x="175" y="755" fill="#1e293b" fontWeight="700" fontSize="13" fontFamily="Inter,sans-serif">Airport (T3)</text>
+                                                </g>
+
+                                                {/* ── Interchange Nodes ── */}
+                                                {/* Kashmere Gate (Red/Yellow) */}
+                                                <g className="cursor-pointer group"
+                                                    onClick={() => setSelectedStation(DUMMY_STATIONS.find(s => s.name === 'Kashmere Gate') || { name: 'Kashmere Gate', line: 'Red Line', isInterchange: true })}>
+                                                    <circle cx="600" cy="200" r="18" fill="white" stroke="#003087" strokeWidth="7" className="group-hover:scale-110 transition-transform origin-[600px_200px]" />
+                                                    <text x="630" y="195" fill="#003087" fontWeight="900" fontSize="14" fontFamily="Inter,sans-serif">Kashmere Gate</text>
+                                                </g>
+
+                                                {/* Rajiv Chowk (Yellow/Blue) — HIGHLIGHTED */}
+                                                <g className="cursor-pointer group"
+                                                    onClick={() => setSelectedStation(DUMMY_STATIONS.find(s => s.name === 'Rajiv Chowk') || { name: 'Rajiv Chowk', line: 'Yellow Line', isInterchange: true })}>
+                                                    <circle cx="600" cy="450" r="22" fill="white" stroke="#D7231A" strokeWidth="9" className="group-hover:scale-110 transition-transform origin-[600px_450px]" />
+                                                    <text x="638" y="468" fill="#D7231A" fontWeight="900" fontSize="18" fontFamily="Inter,sans-serif">Rajiv Chowk</text>
+                                                </g>
+
+                                                {/* New Delhi (Yellow/Orange) */}
+                                                <g className="cursor-pointer group"
+                                                    onClick={() => setSelectedStation(DUMMY_STATIONS.find(s => s.name === 'New Delhi') || { name: 'New Delhi', line: 'Yellow Line', isInterchange: true })}>
+                                                    <circle cx="600" cy="500" r="18" fill="white" stroke="#003087" strokeWidth="7" className="group-hover:scale-110 transition-transform origin-[600px_500px]" />
+                                                    <text x="630" y="505" fill="#003087" fontWeight="900" fontSize="14" fontFamily="Inter,sans-serif">New Delhi</text>
+                                                </g>
+
+                                                {/* Hauz Khas (Yellow/Magenta) */}
+                                                <g className="cursor-pointer group"
+                                                    onClick={() => setSelectedStation(DUMMY_STATIONS.find(s => s.name === 'Hauz Khas') || { name: 'Hauz Khas', line: 'Yellow Line', isInterchange: true })}>
+                                                    <circle cx="600" cy="625" r="18" fill="white" stroke="#003087" strokeWidth="7" className="group-hover:scale-110 transition-transform origin-[600px_625px]" />
+                                                    <text x="630" y="630" fill="#003087" fontWeight="900" fontSize="14" fontFamily="Inter,sans-serif">Hauz Khas</text>
+                                                </g>
+
+                                                {/* Janakpuri West (Blue/Magenta) */}
+                                                <g className="cursor-pointer group"
+                                                    onClick={() => setSelectedStation(DUMMY_STATIONS.find(s => s.name === 'Janakpuri West') || { name: 'Janakpuri West', line: 'Blue Line', isInterchange: true })}>
+                                                    <circle cx="200" cy="450" r="16" fill="white" stroke="#003087" strokeWidth="6" className="group-hover:scale-110 transition-transform origin-[200px_450px]" />
+                                                    <text x="200" y="490" fill="#003087" fontWeight="800" fontSize="13" fontFamily="Inter,sans-serif" textAnchor="middle">Janakpuri West</text>
+                                                </g>
+
+                                                {/* Botanical Garden (Blue/Magenta) */}
+                                                <g className="cursor-pointer group"
+                                                    onClick={() => setSelectedStation(DUMMY_STATIONS.find(s => s.name === 'Botanical Garden') || { name: 'Botanical Garden', line: 'Blue Line', isInterchange: true })}>
+                                                    <circle cx="900" cy="450" r="16" fill="white" stroke="#003087" strokeWidth="6" className="group-hover:scale-110 transition-transform origin-[900px_450px]" />
+                                                    <text x="900" y="490" fill="#003087" fontWeight="800" fontSize="13" fontFamily="Inter,sans-serif" textAnchor="middle">Botanical Garden</text>
+                                                </g>
+
+                                            </svg>
+                                        </div>
+                                    </TransformComponent>
+                                </>
+                            )}
+                        </TransformWrapper>
+                    </motion.div>
+                </div>
+            </div>
+        </div>
+    )
 }

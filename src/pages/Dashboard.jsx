@@ -1,342 +1,285 @@
 import { useState } from 'react'
+import { Link } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { QRCodeSVG } from 'qrcode.react'
 import {
-    MapPin, Clock, Download, ArrowRight, CheckCircle2,
-    Train, Zap, CalendarDays, Ticket, ChevronRight,
-    TrendingUp, Shield, Star
+    Train, MapPin, Clock, Users, Download, Navigation,
+    TicketCheck, ChevronRight, TrendingUp, Wallet, X
 } from 'lucide-react'
-import { Link } from 'react-router-dom'
-import { useAuthStore } from '@/store/authStore'
 
-// ─── Mock Data ────────────────────────────────────────────────────────────────
+/* ── Dummy data ───────────────────────────────────────────────── */
 const ACTIVE_TICKET = {
-    id: 'TKT-9482A',
+    id: 'MTS-20240221-7834',
+    qrData: 'METRO-SYNC-TKT-7834-RAJIV-NEWDELHI',
     from: 'Rajiv Chowk',
-    fromLine: 'Yellow Line',
-    to: 'Airport (T3)',
-    toLine: 'Orange Line',
-    date: 'Feb 21, 2026',
-    time: '14:30',
-    passengers: 1,
-    fare: '₹60.00',
-    stops: 8,
-    duration: '27 min',
-    transfers: 1,
-    type: 'One-Way',
-    qrData: 'metro://ticket/TKT-9482A/valid/rajivchowk-airport-20260221',
-    segments: [
-        { line: 'Yellow Line', color: '#eab308', from: 'Rajiv Chowk', to: 'New Delhi', stops: 2 },
-        { line: 'Orange Line', color: '#f97316', from: 'New Delhi', to: 'Airport (T3)', stops: 6 },
-    ]
+    to: 'New Delhi',
+    line: 'Yellow Line',
+    date: '21 Feb 2026',
+    time: '09:45 AM',
+    passengers: 2,
+    status: 'Active',
+    fare: '₹40',
 }
 
-const HISTORY = [
-    { id: 'TKT-8812B', from: 'Kashmere Gate', to: 'Hauz Khas', date: 'Feb 19, 2026', fare: '₹45.00', status: 'completed', line: 'Yellow Line', lineColor: '#eab308', duration: '22 min', stops: 7 },
-    { id: 'TKT-8571C', from: 'Dwarka Sec 21', to: 'Botanical Garden', date: 'Feb 17, 2026', fare: '₹55.00', status: 'completed', line: 'Blue Line', lineColor: '#3b82f6', duration: '34 min', stops: 11 },
-    { id: 'TKT-7934D', from: 'HUDA City Centre', to: 'Rajiv Chowk', date: 'Feb 14, 2026', fare: '₹50.00', status: 'completed', line: 'Yellow Line', lineColor: '#eab308', duration: '18 min', stops: 6 },
-    { id: 'TKT-7612E', from: 'Janakpuri West', to: 'Lajpat Nagar', date: 'Feb 10, 2026', fare: '₹40.00', status: 'cancelled', line: 'Magenta Line', lineColor: '#c026d3', duration: '—', stops: 0 },
-    { id: 'TKT-7201F', from: 'Noida Sec 15', to: 'New Delhi', date: 'Feb 7, 2026', fare: '₹35.00', status: 'completed', line: 'Blue Line', lineColor: '#3b82f6', duration: '29 min', stops: 9 },
+const BOOKING_HISTORY = [
+    { id: 'MTS-20240220-4321', from: 'Hauz Khas', to: 'Rajiv Chowk', date: 'Feb 20', fare: '₹35', status: 'Completed' },
+    { id: 'MTS-20240219-3310', from: 'Dwarka Sec 21', to: 'Kashmere Gate', date: 'Feb 19', fare: '₹60', status: 'Completed' },
+    { id: 'MTS-20240217-2198', from: 'New Delhi', to: 'Botanical Garden', date: 'Feb 17', fare: '₹55', status: 'Completed' },
 ]
 
 const STATS = [
-    { icon: Ticket, label: 'Total Journeys', value: '24', color: 'text-blue-500', bg: 'bg-blue-50 dark:bg-blue-500/10' },
-    { icon: TrendingUp, label: 'Total Spent', value: '₹1,240', color: 'text-violet-500', bg: 'bg-violet-50 dark:bg-violet-500/10' },
-    { icon: Star, label: 'Avg. Rating', value: '4.8', color: 'text-amber-500', bg: 'bg-amber-50 dark:bg-amber-500/10' },
-    { icon: Shield, label: 'Green Trips', value: '18', color: 'text-emerald-500', bg: 'bg-emerald-50 dark:bg-emerald-500/10' },
+    { label: 'Total Trips', value: '48', icon: Train, color: '#D7231A', bg: '#FEF2F2' },
+    { label: 'Amount Spent', value: '₹2,340', icon: Wallet, color: '#003087', bg: '#EFF6FF' },
+    { label: 'Km Travelled', value: '284', icon: TrendingUp, color: '#00873D', bg: '#F0FDF4' },
 ]
 
-// Status badge config
-const STATUS_CONFIG = {
-    completed: { label: 'Completed', classes: 'bg-emerald-100 text-emerald-700 dark:bg-emerald-500/15 dark:text-emerald-400' },
-    cancelled: { label: 'Cancelled', classes: 'bg-rose-100 text-rose-700 dark:bg-rose-500/15 dark:text-rose-400' },
-    active: { label: 'Active', classes: 'bg-blue-100 text-blue-700 dark:bg-blue-500/15 dark:text-blue-400' },
+const lineColor = (line) => {
+    if (!line) return '#64748B'
+    if (line.includes('Yellow')) return '#D97706'
+    if (line.includes('Blue')) return '#2563EB'
+    if (line.includes('Red')) return '#D7231A'
+    if (line.includes('Orange')) return '#EA580C'
+    return '#64748B'
 }
 
-// ─── Sub-components ───────────────────────────────────────────────────────────
-
-function SegmentDot({ color }) {
-    return (
-        <span className="flex-shrink-0 w-2.5 h-2.5 rounded-full border-2 border-white dark:border-slate-800 shadow" style={{ backgroundColor: color }} />
-    )
-}
-
-function HistoryRow({ ticket, index }) {
-    const { label: statusLabel, classes: statusClasses } = STATUS_CONFIG[ticket.status]
-    return (
-        <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: index * 0.05 }}
-            className="group flex items-center gap-4 p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/40 hover:bg-white dark:hover:bg-slate-800 border border-transparent hover:border-slate-200 dark:hover:border-slate-700 transition-all cursor-pointer"
-        >
-            {/* Line color strip */}
-            <div className="w-1 self-stretch rounded-full flex-shrink-0" style={{ backgroundColor: ticket.lineColor }} />
-
-            {/* Route info */}
-            <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-1.5 mb-1">
-                    <span className="font-semibold text-slate-800 dark:text-white text-sm truncate">{ticket.from}</span>
-                    <ArrowRight size={13} className="text-slate-400 flex-shrink-0" />
-                    <span className="font-semibold text-slate-800 dark:text-white text-sm truncate">{ticket.to}</span>
-                </div>
-                <div className="flex items-center gap-3 text-xs text-slate-500 dark:text-slate-400">
-                    <span className="flex items-center gap-1"><CalendarDays size={11} />{ticket.date}</span>
-                    {ticket.status !== 'cancelled' && <span className="flex items-center gap-1"><Clock size={11} />{ticket.duration}</span>}
-                </div>
-            </div>
-
-            {/* Fare */}
-            <span className="font-bold text-slate-700 dark:text-slate-200 text-sm flex-shrink-0">{ticket.fare}</span>
-
-            {/* Status badge */}
-            <span className={`text-xs font-semibold px-2.5 py-1 rounded-lg flex-shrink-0 ${statusClasses}`}>{statusLabel}</span>
-
-            <ChevronRight size={16} className="text-slate-300 group-hover:text-slate-500 dark:text-slate-600 dark:group-hover:text-slate-400 transition-colors flex-shrink-0" />
-        </motion.div>
-    )
-}
-
-// ─── Main Component ───────────────────────────────────────────────────────────
 export default function Dashboard() {
-    const { user } = useAuthStore()
     const [qrExpanded, setQrExpanded] = useState(false)
-    const [filter, setFilter] = useState('all')
-
-    const filtered = filter === 'all' ? HISTORY : HISTORY.filter(t => t.status === filter)
+    const [activeTab, setActiveTab] = useState('tickets')
 
     return (
-        <div className="px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto pt-6 pb-16 space-y-8">
-
-            {/* ── Header ── */}
-            <motion.div
-                initial={{ opacity: 0, y: -12 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="flex flex-col sm:flex-row sm:items-center justify-between gap-4"
-            >
-                <div>
-                    <p className="text-sm text-slate-500 dark:text-slate-400 font-medium mb-0.5">
-                        Welcome back, {user?.name || 'Passenger'} 👋
-                    </p>
-                    <h1 className="text-3xl md:text-4xl font-extrabold text-slate-900 dark:text-white tracking-tight">My Tickets</h1>
-                </div>
-                <Link
-                    to="/"
-                    className="flex items-center gap-2 self-start sm:self-auto px-5 py-2.5 bg-metro-primary text-white rounded-xl font-semibold text-sm shadow-lg shadow-blue-500/25 hover:bg-blue-700 transition-colors"
-                >
-                    <Train size={16} />
-                    Book New Journey
-                </Link>
-            </motion.div>
-
-            {/* ── Stats Row ── */}
-            <motion.div
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.05 }}
-                className="grid grid-cols-2 lg:grid-cols-4 gap-3"
-            >
-                {STATS.map(({ icon: Icon, label, value, color, bg }) => (
-                    <div key={label} className={`flex items-center gap-3 p-4 rounded-2xl border border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-sm`}>
-                        <div className={`w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 ${bg}`}>
-                            <Icon size={18} className={color} />
-                        </div>
-                        <div>
-                            <p className="text-xs text-slate-500 dark:text-slate-400">{label}</p>
-                            <p className={`font-bold text-slate-900 dark:text-white text-lg leading-tight`}>{value}</p>
-                        </div>
-                    </div>
-                ))}
-            </motion.div>
-
-            {/* ── Main Grid ── */}
-            <div className="grid grid-cols-1 xl:grid-cols-[1fr_380px] gap-6">
-
-                {/* ── LEFT: Active Ticket (Boarding Pass) ── */}
-                <motion.section
-                    initial={{ opacity: 0, y: 16 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.1 }}
-                    className="space-y-3"
-                >
-                    <h2 className="text-lg font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2">
-                        <Zap size={18} className="text-blue-500" />
-                        Active Journey
-                    </h2>
-
-                    {/* Boarding pass card */}
-                    <div className="bg-white dark:bg-slate-900 rounded-[2rem] shadow-xl border border-slate-100 dark:border-slate-800 overflow-hidden">
-
-                        {/* Card header gradient */}
-                        <div className="bg-gradient-to-r from-metro-primary via-blue-600 to-indigo-600 px-6 pt-6 pb-10 relative overflow-hidden">
-                            <div className="absolute inset-0 opacity-10" style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.4'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")` }} />
-                            <div className="relative flex items-center justify-between">
-                                <div>
-                                    <span className="text-blue-200 text-xs font-bold uppercase tracking-widest">{ACTIVE_TICKET.type} Ticket</span>
-                                    <p className="text-white/70 text-sm mt-1">{ACTIVE_TICKET.date} • {ACTIVE_TICKET.time}</p>
-                                </div>
-                                <div className="flex items-center gap-2 bg-white/20 backdrop-blur-sm px-3 py-1.5 rounded-full">
-                                    <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-                                    <span className="text-white text-xs font-bold">ACTIVE</span>
-                                </div>
-                            </div>
-
-                            {/* Route display */}
-                            <div className="relative mt-5 flex items-center gap-3">
-                                <div className="flex-1">
-                                    <p className="text-blue-200 text-xs font-semibold mb-1">FROM</p>
-                                    <p className="text-white text-2xl font-black leading-tight">{ACTIVE_TICKET.from}</p>
-                                    <p className="text-blue-200 text-xs mt-1">{ACTIVE_TICKET.fromLine}</p>
-                                </div>
-                                <div className="flex flex-col items-center gap-1 px-2">
-                                    <div className="flex items-center gap-1">
-                                        {ACTIVE_TICKET.segments.map((seg, i) => (
-                                            <div key={i} className="flex items-center gap-1">
-                                                <div className="w-6 h-1 rounded-full" style={{ backgroundColor: seg.color }} />
-                                                {i < ACTIVE_TICKET.segments.length - 1 && <div className="w-2 h-2 rounded-full bg-white/50" />}
-                                            </div>
-                                        ))}
-                                    </div>
-                                    <span className="text-blue-200 text-[10px] font-semibold">{ACTIVE_TICKET.stops} stops • {ACTIVE_TICKET.transfers} transfer</span>
-                                </div>
-                                <div className="flex-1 text-right">
-                                    <p className="text-blue-200 text-xs font-semibold mb-1">TO</p>
-                                    <p className="text-white text-2xl font-black leading-tight">{ACTIVE_TICKET.to}</p>
-                                    <p className="text-blue-200 text-xs mt-1">{ACTIVE_TICKET.toLine}</p>
-                                </div>
-                            </div>
-                        </div>
-
-                        {/* Tear line */}
-                        <div className="relative flex items-center -mt-4">
-                            <div className="w-8 h-8 rounded-full bg-slate-50 dark:bg-slate-950 flex-shrink-0 -ml-4 border-r border-dashed border-slate-200 dark:border-slate-700" />
-                            <div className="flex-1 border-t-2 border-dashed border-slate-200 dark:border-slate-700" />
-                            <div className="w-8 h-8 rounded-full bg-slate-50 dark:bg-slate-950 flex-shrink-0 -mr-4" />
-                        </div>
-
-                        {/* Card body */}
-                        <div className="px-6 pt-4 pb-6">
-                            <div className="flex flex-col sm:flex-row gap-6 items-center">
-
-                                {/* QR Code section */}
-                                <div
-                                    className="relative cursor-pointer group flex-shrink-0"
-                                    onClick={() => setQrExpanded(true)}
-                                >
-                                    <div className="bg-white dark:bg-slate-100 p-3 rounded-2xl shadow-md border border-slate-100 dark:border-slate-200">
-                                        <QRCodeSVG
-                                            value={ACTIVE_TICKET.qrData}
-                                            size={120}
-                                            bgColor="#ffffff"
-                                            fgColor="#0f172a"
-                                            level="H"
-                                            includeMargin={false}
-                                        />
-                                    </div>
-                                    <div className="absolute inset-0 rounded-2xl bg-black/0 group-hover:bg-black/5 flex items-center justify-center transition-all">
-                                        <span className="text-xs text-slate-600 dark:text-slate-700 font-semibold opacity-0 group-hover:opacity-100 bg-white px-2 py-1 rounded-lg shadow transition-all">Expand</span>
-                                    </div>
-                                    <p className="text-center text-xs text-slate-400 mt-2 font-medium">{ACTIVE_TICKET.id}</p>
-                                </div>
-
-                                {/* Details */}
-                                <div className="flex-1 w-full space-y-3">
-                                    <div className="grid grid-cols-3 gap-3">
-                                        {[
-                                            { label: 'Duration', value: ACTIVE_TICKET.duration, icon: Clock },
-                                            { label: 'Passengers', value: ACTIVE_TICKET.passengers, icon: MapPin },
-                                            { label: 'Fare', value: ACTIVE_TICKET.fare, icon: Ticket },
-                                        ].map(({ label, value, icon: Icon }) => (
-                                            <div key={label} className="bg-slate-50 dark:bg-slate-800 rounded-xl p-3 text-center">
-                                                <p className="text-xs text-slate-400 mb-1">{label}</p>
-                                                <p className="font-bold text-slate-800 dark:text-white text-sm">{value}</p>
-                                            </div>
-                                        ))}
-                                    </div>
-
-                                    {/* Segment timeline */}
-                                    <div className="bg-slate-50 dark:bg-slate-800 rounded-xl p-3 space-y-2">
-                                        <p className="text-xs text-slate-400 font-semibold uppercase tracking-wider mb-2">Route</p>
-                                        {ACTIVE_TICKET.segments.map((seg, i) => (
-                                            <div key={i} className="flex items-center gap-2 text-xs">
-                                                <SegmentDot color={seg.color} />
-                                                <span className="font-semibold text-slate-600 dark:text-slate-300" style={{ color: seg.color }}>{seg.line}</span>
-                                                <span className="text-slate-400">{seg.from} → {seg.to}</span>
-                                                <span className="ml-auto text-slate-400">{seg.stops} stops</span>
-                                            </div>
-                                        ))}
-                                    </div>
-
-                                    {/* Action buttons */}
-                                    <div className="flex gap-2 pt-1">
-                                        <button className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 bg-metro-primary text-white rounded-xl font-semibold text-sm hover:bg-blue-700 transition-colors shadow-sm shadow-blue-500/20">
-                                            <Download size={15} /> Save Ticket
-                                        </button>
-                                        <Link to="/map" className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 rounded-xl font-semibold text-sm hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors">
-                                            <MapPin size={15} /> Track Route
-                                        </Link>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </motion.section>
-
-                {/* ── RIGHT: Booking History ── */}
-                <motion.section
-                    initial={{ opacity: 0, y: 16 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.15 }}
-                    className="space-y-3"
-                >
-                    <div className="flex items-center justify-between">
-                        <h2 className="text-lg font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2">
-                            <CalendarDays size={18} className="text-violet-500" />
-                            Booking History
-                        </h2>
-                        <span className="text-xs text-slate-400 font-medium">{HISTORY.length} trips</span>
-                    </div>
-
-                    {/* Filter tabs */}
-                    <div className="flex gap-1.5 p-1 bg-slate-100 dark:bg-slate-800 rounded-xl">
-                        {['all', 'completed', 'cancelled'].map(f => (
-                            <button
-                                key={f}
-                                onClick={() => setFilter(f)}
-                                className={`flex-1 text-xs font-semibold py-1.5 rounded-lg capitalize transition-all ${filter === f
-                                    ? 'bg-white dark:bg-slate-700 text-slate-800 dark:text-white shadow-sm'
-                                    : 'text-slate-400 hover:text-slate-600 dark:hover:text-slate-300'}`}
-                            >
-                                {f}
-                            </button>
-                        ))}
-                    </div>
-
-                    {/* History list */}
-                    <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-100 dark:border-slate-800 shadow-sm overflow-hidden">
-                        <div className="p-3 space-y-1.5 max-h-[500px] overflow-y-auto">
-                            <AnimatePresence mode="wait">
-                                {filtered.length > 0 ? (
-                                    filtered.map((ticket, i) => (
-                                        <HistoryRow key={ticket.id} ticket={ticket} index={i} />
-                                    ))
-                                ) : (
-                                    <motion.div
-                                        initial={{ opacity: 0 }}
-                                        animate={{ opacity: 1 }}
-                                        className="py-12 text-center text-slate-400"
-                                    >
-                                        <Ticket size={36} className="mx-auto mb-3 opacity-30" />
-                                        <p className="font-medium text-sm">No {filter} bookings</p>
-                                    </motion.div>
-                                )}
-                            </AnimatePresence>
-                        </div>
-                    </div>
-                </motion.section>
+        <div className="min-h-[90vh] bg-gray-50">
+            {/* Tricolor strip */}
+            <div className="flex h-1">
+                <div className="flex-1 bg-[#D7231A]" />
+                <div className="flex-1 bg-white" />
+                <div className="flex-1 bg-[#00873D]" />
             </div>
 
-            {/* ── QR Full-Screen Modal ── */}
+            {/* Page Header */}
+            <div className="bg-[#003087] px-4 sm:px-6 lg:px-8 pb-16 pt-8">
+                <div className="max-w-6xl mx-auto flex items-center justify-between">
+                    <div>
+                        <h1 className="text-2xl md:text-3xl font-black text-white mb-1">My Dashboard</h1>
+                        <p className="text-blue-200 text-sm font-medium flex items-center gap-2">
+                            <Train size={14} /> MetroSync Passenger Portal
+                        </p>
+                    </div>
+                    <Link to="/"
+                        className="hidden sm:flex items-center gap-2 px-4 py-2 bg-[#D7231A] text-white rounded-xl font-bold text-sm hover:bg-red-700 transition-colors">
+                        <Navigation size={15} /> Book New Ticket
+                    </Link>
+                </div>
+            </div>
+
+            <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 -mt-12 pb-12 space-y-6">
+
+                {/* ── Stats Row */}
+                <div className="flex gap-3 overflow-x-auto pb-1 no-scrollbar">
+                    {STATS.map(({ label, value, icon: Icon, color, bg }) => (
+                        <motion.div
+                            key={label}
+                            initial={{ opacity: 0, y: 12 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            className="bg-white rounded-2xl border border-gray-200 shadow-sm p-4 flex items-center gap-3 min-w-[160px] flex-1"
+                        >
+                            <div className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0" style={{ backgroundColor: bg }}>
+                                <Icon size={19} style={{ color }} />
+                            </div>
+                            <div>
+                                <p className="text-lg font-black text-gray-900">{value}</p>
+                                <p className="text-xs text-gray-500 font-semibold">{label}</p>
+                            </div>
+                        </motion.div>
+                    ))}
+                </div>
+
+                {/* ── Main Content Grid */}
+                <div className="grid grid-cols-1 lg:grid-cols-[1fr_340px] gap-6">
+
+                    {/* Left Column */}
+                    <div className="space-y-5">
+
+                        {/* Active Ticket — Boarding Pass */}
+                        <motion.div
+                            initial={{ opacity: 0, y: 16 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: 0.1 }}
+                            className="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden"
+                        >
+                            {/* Header */}
+                            <div className="bg-[#003087] px-6 pt-6 pb-12 relative overflow-hidden">
+                                <div className="absolute top-0 right-0 left-0 h-1 flex">
+                                    <div className="flex-1 bg-[#D7231A]" />
+                                    <div className="flex-1 bg-white/20" />
+                                    <div className="flex-1 bg-[#00873D]" />
+                                </div>
+                                <div className="absolute -right-12 -top-12 w-48 h-48 rounded-full bg-white/5" />
+
+                                <div className="flex items-center justify-between mb-4">
+                                    <div className="flex items-center gap-2">
+                                        <TicketCheck size={16} className="text-blue-300" />
+                                        <span className="text-blue-200 font-bold text-xs tracking-wider uppercase">Active Ticket</span>
+                                    </div>
+                                    <span className="bg-[#00873D] text-white text-[10px] font-black px-2.5 py-1 rounded-full">● {ACTIVE_TICKET.status}</span>
+                                </div>
+
+                                <div className="flex items-start gap-3 flex-wrap sm:flex-nowrap">
+                                    <div className="flex-1 min-w-0">
+                                        <p className="text-[10px] text-blue-200 font-bold uppercase tracking-widest mb-0.5">From</p>
+                                        <p className="text-xl sm:text-2xl font-black text-white truncate">{ACTIVE_TICKET.from}</p>
+                                    </div>
+                                    <div className="w-10 h-10 rounded-full bg-[#D7231A] flex items-center justify-center text-white flex-shrink-0 mt-4">
+                                        <ChevronRight size={18} />
+                                    </div>
+                                    <div className="flex-1 min-w-0 text-right">
+                                        <p className="text-[10px] text-blue-200 font-bold uppercase tracking-widest mb-0.5">To</p>
+                                        <p className="text-xl sm:text-2xl font-black text-white truncate">{ACTIVE_TICKET.to}</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Tear line */}
+                            <div className="relative flex items-center -mt-4">
+                                <div className="w-8 h-8 rounded-full bg-gray-50 flex-shrink-0 -ml-4 border-r border-dashed border-gray-300" />
+                                <div className="flex-1 border-t-2 border-dashed border-gray-300" />
+                                <div className="w-8 h-8 rounded-full bg-gray-50 flex-shrink-0 -mr-4" />
+                            </div>
+
+                            {/* Body */}
+                            <div className="px-6 pt-4 pb-6">
+                                <div className="flex flex-col sm:flex-row gap-5 items-center">
+                                    {/* QR Code */}
+                                    <div className="cursor-pointer group flex-shrink-0" onClick={() => setQrExpanded(true)}>
+                                        <div className="bg-white border border-gray-200 p-3 rounded-2xl shadow-sm group-hover:shadow-md transition-shadow">
+                                            <QRCodeSVG value={ACTIVE_TICKET.qrData} size={110} bgColor="#ffffff" fgColor="#003087" level="H" />
+                                        </div>
+                                        <p className="text-center text-[10px] text-gray-400 mt-2 font-mono font-semibold">{ACTIVE_TICKET.id}</p>
+                                    </div>
+
+                                    {/* Details */}
+                                    <div className="flex-1 w-full space-y-3">
+                                        <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                                            {[
+                                                { label: 'Date', value: ACTIVE_TICKET.date },
+                                                { label: 'Departs', value: ACTIVE_TICKET.time },
+                                                { label: 'Passengers', value: `${ACTIVE_TICKET.passengers} Adult` },
+                                            ].map(({ label, value }) => (
+                                                <div key={label} className="bg-gray-50 border border-gray-200 rounded-xl p-2.5 text-center">
+                                                    <p className="text-[9px] font-bold text-gray-400 uppercase tracking-wider">{label}</p>
+                                                    <p className="font-bold text-gray-800 text-xs mt-0.5">{value}</p>
+                                                </div>
+                                            ))}
+                                        </div>
+
+                                        <div className="flex items-center gap-2">
+                                            <div className="w-2.5 h-2.5 rounded-full flex-shrink-0" style={{ backgroundColor: lineColor(ACTIVE_TICKET.line) }} />
+                                            <span className="text-sm font-bold text-gray-700">{ACTIVE_TICKET.line}</span>
+                                            <span className="ml-auto font-black text-[#D7231A] text-lg">{ACTIVE_TICKET.fare}</span>
+                                        </div>
+
+                                        <div className="flex gap-2">
+                                            <button className="flex-1 flex items-center justify-center gap-2 py-2.5 bg-[#003087] text-white rounded-xl font-bold text-sm hover:bg-blue-900 transition-colors">
+                                                <Download size={14} /> Save Ticket
+                                            </button>
+                                            <Link to="/map" className="flex-1 flex items-center justify-center gap-2 py-2.5 bg-gray-50 border border-gray-200 text-gray-800 rounded-xl font-bold text-sm hover:bg-gray-100 transition-colors">
+                                                <MapPin size={14} /> Track Route
+                                            </Link>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </motion.div>
+
+                        {/* Tabs: Bookings */}
+                        <motion.div
+                            initial={{ opacity: 0, y: 16 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: 0.15 }}
+                            className="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden"
+                        >
+                            <div className="flex items-center gap-3 px-5 py-4 border-b border-gray-100">
+                                <Clock size={16} className="text-[#D7231A]" />
+                                <h2 className="font-black text-gray-800 text-sm">Booking History</h2>
+                            </div>
+
+                            <div className="divide-y divide-gray-100">
+                                {BOOKING_HISTORY.map((b, i) => (
+                                    <motion.div key={b.id}
+                                        initial={{ opacity: 0, x: -8 }}
+                                        animate={{ opacity: 1, x: 0 }}
+                                        transition={{ delay: 0.2 + i * 0.06 }}
+                                        className="px-5 py-3.5 flex items-center gap-4 hover:bg-gray-50 transition-colors cursor-pointer group"
+                                    >
+                                        <div className="w-9 h-9 rounded-xl bg-gray-100 flex items-center justify-center flex-shrink-0">
+                                            <Train size={16} className="text-[#003087]" />
+                                        </div>
+                                        <div className="flex-1 min-w-0">
+                                            <p className="font-bold text-gray-800 text-sm">{b.from} → {b.to}</p>
+                                            <p className="text-xs text-gray-500">{b.date} · {b.id}</p>
+                                        </div>
+                                        <div className="text-right">
+                                            <p className="font-black text-gray-800 text-sm">{b.fare}</p>
+                                            <span className="text-[10px] font-bold text-[#00873D] bg-green-50 px-2 py-0.5 rounded-full">{b.status}</span>
+                                        </div>
+                                        <ChevronRight size={14} className="text-gray-300 group-hover:text-gray-500 transition-colors" />
+                                    </motion.div>
+                                ))}
+                            </div>
+                        </motion.div>
+                    </div>
+
+                    {/* Right Column */}
+                    <div className="space-y-5">
+                        {/* Quick Actions */}
+                        <motion.div
+                            initial={{ opacity: 0, x: 12 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            transition={{ delay: 0.15 }}
+                            className="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden"
+                        >
+                            <div className="px-5 py-4 bg-[#D7231A]">
+                                <h3 className="font-black text-white text-sm">Quick Actions</h3>
+                            </div>
+                            <div className="p-4 space-y-2">
+                                {[
+                                    { label: 'Book New Ticket', color: '#D7231A', bg: '#FEF2F2', to: '/' },
+                                    { label: 'View Network Map', color: '#003087', bg: '#EFF6FF', to: '/map' },
+                                    { label: 'Fare Calculator', color: '#00873D', bg: '#F0FDF4', to: '/' },
+                                ].map(({ label, color, bg, to }) => (
+                                    <Link key={label} to={to}
+                                        className="flex items-center justify-between px-4 py-3 rounded-xl font-bold text-sm transition-all hover:translate-x-1"
+                                        style={{ backgroundColor: bg, color }}>
+                                        {label} <ChevronRight size={15} />
+                                    </Link>
+                                ))}
+                            </div>
+                        </motion.div>
+
+                        {/* Wallet / Pass widget */}
+                        <motion.div
+                            initial={{ opacity: 0, x: 12 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            transition={{ delay: 0.2 }}
+                            className="bg-[#003087] rounded-2xl p-5 relative overflow-hidden"
+                        >
+                            <div className="absolute top-0 left-0 right-0 h-1 flex">
+                                <div className="flex-1 bg-[#D7231A]" />
+                                <div className="flex-1 bg-white/20" />
+                                <div className="flex-1 bg-[#00873D]" />
+                            </div>
+                            <div className="absolute -right-8 -bottom-8 w-40 h-40 rounded-full bg-white/5" />
+                            <p className="text-blue-200 text-xs font-bold uppercase tracking-wider mb-1">MetroSync Pass</p>
+                            <p className="text-3xl font-black text-white mb-0.5">₹1,240</p>
+                            <p className="text-blue-200 text-xs mb-4">Wallet Balance</p>
+                            <button className="w-full py-2.5 bg-[#D7231A] text-white rounded-xl font-bold text-sm hover:bg-red-700 transition-colors">
+                                Recharge Now
+                            </button>
+                        </motion.div>
+                    </div>
+                </div>
+            </div>
+
+            {/* QR Expand Modal */}
             <AnimatePresence>
                 {qrExpanded && (
                     <motion.div
@@ -344,39 +287,24 @@ export default function Dashboard() {
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
                         onClick={() => setQrExpanded(false)}
-                        className="fixed inset-0 z-50 bg-black/70 flex items-center justify-center p-4 backdrop-blur-sm cursor-pointer"
+                        className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4"
                     >
                         <motion.div
-                            initial={{ scale: 0.85, opacity: 0 }}
-                            animate={{ scale: 1, opacity: 1 }}
-                            exit={{ scale: 0.85, opacity: 0 }}
-                            transition={{ type: 'spring', damping: 22 }}
+                            initial={{ scale: 0.8 }}
+                            animate={{ scale: 1 }}
+                            exit={{ scale: 0.8 }}
                             onClick={e => e.stopPropagation()}
-                            className="bg-white rounded-3xl p-8 shadow-2xl flex flex-col items-center gap-4 cursor-default"
+                            className="bg-white rounded-3xl p-8 max-w-xs w-full text-center shadow-2xl"
                         >
-                            <div className="w-full flex items-center justify-between mb-2">
-                                <div>
-                                    <p className="font-black text-slate-900 text-lg">{ACTIVE_TICKET.id}</p>
-                                    <p className="text-slate-500 text-sm">{ACTIVE_TICKET.from} → {ACTIVE_TICKET.to}</p>
-                                </div>
-                                <span className="flex items-center gap-2 bg-emerald-50 text-emerald-600 px-3 py-1.5 rounded-full text-sm font-bold">
-                                    <CheckCircle2 size={15} /> Valid
-                                </span>
+                            <div className="flex h-1 mb-6 rounded-full overflow-hidden">
+                                <div className="flex-1 bg-[#D7231A]" /> <div className="flex-1 bg-gray-200" /> <div className="flex-1 bg-[#00873D]" />
                             </div>
-                            <QRCodeSVG
-                                value={ACTIVE_TICKET.qrData}
-                                size={240}
-                                bgColor="#ffffff"
-                                fgColor="#0f172a"
-                                level="H"
-                                includeMargin={true}
-                            />
-                            <p className="text-xs text-slate-400 font-mono">{ACTIVE_TICKET.qrData}</p>
-                            <button
-                                onClick={() => setQrExpanded(false)}
-                                className="w-full py-3 bg-slate-900 text-white rounded-xl font-bold hover:bg-slate-800 transition-colors"
-                            >
-                                Close
+                            <QRCodeSVG value={ACTIVE_TICKET.qrData} size={200} bgColor="#ffffff" fgColor="#003087" level="H" className="mx-auto" />
+                            <p className="font-mono text-xs text-gray-400 mt-3 mb-1">{ACTIVE_TICKET.id}</p>
+                            <p className="font-bold text-gray-800 text-sm">{ACTIVE_TICKET.from} → {ACTIVE_TICKET.to}</p>
+                            <button onClick={() => setQrExpanded(false)}
+                                className="mt-5 w-full py-2.5 bg-gray-100 text-gray-700 rounded-xl font-bold text-sm hover:bg-gray-200 transition-colors flex items-center justify-center gap-2">
+                                <X size={15} /> Close
                             </button>
                         </motion.div>
                     </motion.div>

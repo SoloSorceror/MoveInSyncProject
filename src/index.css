@@ -1,38 +1,100 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,300;0,14..32,400;0,14..32,500;0,14..32,600;0,14..32,700;0,14..32,800;0,14..32,900;1,14..32,400&display=swap');
 
 @import "tailwindcss";
 @plugin "daisyui";
 
-@custom-variant dark (&:where(.dark, .dark *));
+/* ─── MMT-Inspired Design System ──────────────────────────────────────────── */
+/* Palette: Clean white canvas, Bright blue primary, Orange for CTAs          */
 
 @theme {
-  --color-metro-primary: #164880;
-  --color-metro-dark: #0f172a;
-  --color-metro-accent: #eb2226;
-  --font-sans: 'Inter', sans-serif;
-  --animate-pulse-slow: pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  /* Primary — MakeMyTrip electric blue */
+  --color-metro-primary: #008CFF;
+  --color-metro-primary-dark: #006FD6;
+
+  /* Accent — warm orange for CTAs, highlights */
+  --color-metro-accent: #FF7B2C;
+  --color-metro-accent-dark: #E56A20;
+
+  /* Surface / Background */
+  --color-metro-bg: #F4F8FF;
+  --color-metro-card: #FFFFFF;
+  --color-metro-dark: #1C2B39;
+
+  /* Borders & dividers */
+  --color-metro-border: #D8E6F7;
+
+  /* Typography */
+  --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
 }
 
+/* ─── Base ─────────────────────────────────────────────────────────────────── */
 @layer base {
   body {
-    @apply antialiased bg-slate-50 text-slate-900 font-sans transition-colors duration-300;
+    @apply antialiased font-sans;
+    background-color: #F4F8FF;
+    color: #1C2B39;
   }
 
-  html.dark body {
-    @apply bg-slate-900 text-slate-100;
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    @apply font-bold tracking-tight;
+    color: #1C2B39;
+  }
+
+  a {
+    @apply transition-colors;
   }
 }
 
+/* ─── Utilities ─────────────────────────────────────────────────────────────── */
 @layer utilities {
+
+  /* Card with subtle blue-tint shadow — replaces glass-panel */
   .glass-panel {
-    @apply bg-white/60 backdrop-blur-xl border border-white/20 shadow-2xl shadow-blue-900/10;
+    background: #FFFFFF;
+    border: 1px solid #D8E6F7;
+    box-shadow: 0 2px 20px 0 rgba(0, 140, 255, 0.06), 0 1px 4px rgba(0, 0, 0, 0.04);
+    border-radius: 1.25rem;
   }
 
-  .dark .glass-panel {
-    @apply bg-slate-800/60 border-slate-700/50 shadow-2xl shadow-black/40;
-  }
-
+  /* The old gradient text utility */
   .text-gradient {
     @apply bg-clip-text text-transparent bg-gradient-to-r;
+  }
+
+  /* Scrollbar */
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 4px;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    background: #D8E6F7;
+    border-radius: 99px;
+  }
+
+  /* Utility — page section background */
+  .page-bg {
+    background-color: #F4F8FF;
+  }
+
+  .card-bg {
+    background-color: #FFFFFF;
   }
 }

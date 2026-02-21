@@ -14,6 +14,7 @@ const BookingConfirmation = lazy(() => import('@/pages/BookingConfirmation'))
 const AdminDashboard = lazy(() => import('@/pages/AdminDashboard'))
 const AdminLines = lazy(() => import('@/pages/AdminLines'))
 const AdminBulkImport = lazy(() => import('@/pages/AdminBulkImport'))
+const Profile = lazy(() => import('@/pages/Profile'))
 
 // Full-screen skeleton fallback
 function PageSkeleton() {
@@ -55,6 +56,11 @@ function App() {
                             <BookingConfirmation />
                         </ProtectedRoute>
                     } />
+                    <Route path="/profile" element={
+                        <ProtectedRoute>
+                            <Profile />
+                        </ProtectedRoute>
+                    } />
                 </Route>
 
                 {/* Protected: Admin-only Routes */}
@@ -66,6 +72,9 @@ function App() {
                     <Route index element={<AdminDashboard />} />
                     <Route path="lines" element={<AdminLines />} />
                     <Route path="import" element={<AdminBulkImport />} />
+                    <Route path="users" element={<AdminDashboard />} />
+                    <Route path="tickets" element={<AdminDashboard />} />
+                    <Route path="analytics" element={<AdminDashboard />} />
                 </Route>
             </Routes>
         </Suspense>

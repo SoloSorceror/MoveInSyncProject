@@ -1,111 +1,204 @@
-import { ShieldCheck, Info } from 'lucide-react';
+import { motion } from 'framer-motion'
+import { Link } from 'react-router-dom'
+import {
+    Train, Users, TicketCheck, TrendingUp, AlertCircle,
+    CheckCircle2, Clock, ChevronRight, Map, Activity,
+    ArrowUpRight, ArrowDownRight
+} from 'lucide-react'
 
-const VERSIONS = ['v1.0', 'v1.1', 'v2.0', 'v2.1', 'v3.0'];
+/* ── Stats ─────────────────────────────────────────────────────── */
+const KPI_CARDS = [
+    { label: 'Total Passengers Today', value: '6,218,430', change: '+4.2%', up: true, icon: Users, color: '#D7231A', bg: '#FEF2F2' },
+    { label: 'Tickets Issued Today', value: '1,284,921', change: '+2.8%', up: true, icon: TicketCheck, color: '#003087', bg: '#EFF6FF' },
+    { label: 'Active Metro Lines', value: '9 / 9', change: '100%', up: true, icon: Train, color: '#00873D', bg: '#F0FDF4' },
+    { label: 'Avg Journey Time', value: '24 min', change: '-1.3 min', up: true, icon: Clock, color: '#7C3AED', bg: '#F5F3FF' },
+]
 
-// Green = direct upgrade allowed; amber = requires intermediate stop; red = blocked
-const MATRIX = {
-    'v1.0': { 'v1.0': 'green', 'v1.1': 'green', 'v2.0': 'amber', 'v2.1': 'red', 'v3.0': 'red' },
-    'v1.1': { 'v1.0': 'red', 'v1.1': 'green', 'v2.0': 'green', 'v2.1': 'amber', 'v3.0': 'red' },
-    'v2.0': { 'v1.0': 'red', 'v1.1': 'red', 'v2.0': 'green', 'v2.1': 'green', 'v3.0': 'amber' },
-    'v2.1': { 'v1.0': 'red', 'v1.1': 'red', 'v2.0': 'red', 'v2.1': 'green', 'v3.0': 'green' },
-    'v3.0': { 'v1.0': 'red', 'v1.1': 'red', 'v2.0': 'red', 'v2.1': 'red', 'v3.0': 'green' },
-};
+const RECENT_BOOKINGS = [
+    { id: 'MTS-7834', from: 'Rajiv Chowk', to: 'New Delhi', fare: '₹40', time: '09:45 AM', status: 'Active' },
+    { id: 'MTS-7833', from: 'Hauz Khas', to: 'Botanical Garden', fare: '₹60', time: '09:32 AM', status: 'Active' },
+    { id: 'MTS-7832', from: 'Dwarka Sec 21', to: 'Kashmere Gate', fare: '₹55', time: '09:18 AM', status: 'Completed' },
+    { id: 'MTS-7831', from: 'Airport (T3)', to: 'New Delhi', fare: '₹60', time: '09:10 AM', status: 'Completed' },
+    { id: 'MTS-7830', from: 'Noida Electronic City', to: 'Rajiv Chowk', fare: '₹45', time: '09:01 AM', status: 'Completed' },
+]
 
-const TOOLTIPS = {
-    'green': 'Direct Upgrade Allowed seamlessly.',
-    'amber': 'Requires Intermediate Stop (Data Migration Needed).',
-    'red': 'Upgrade Blocked due to breaking architectural changes.'
-};
+const LINE_STATUS = [
+    { line: 'Yellow Line', color: '#D97706', stations: 37, status: 'Operational', freq: '3 min' },
+    { line: 'Blue Line', color: '#2563EB', stations: 50, status: 'Operational', freq: '4 min' },
+    { line: 'Red Line', color: '#D7231A', stations: 29, status: 'Minor Delay', freq: '6 min' },
+    { line: 'Magenta Line', color: '#C026D3', stations: 25, status: 'Operational', freq: '5 min' },
+    { line: 'Orange Line', color: '#EA580C', stations: 6, status: 'Operational', freq: '15 min' },
+]
 
 export default function AdminDashboard() {
     return (
-        <div className="max-w-5xl mx-auto space-y-6 animate-fade-in">
-            <div>
-                <h1 className="text-2xl font-bold text-slate-800 dark:text-white mb-2">Version & Compatibility Matrix</h1>
-                <p className="text-slate-500 dark:text-slate-400">
-                    Read-only matrix showing upgrade paths between software versions.
-                </p>
+        <div className="space-y-6 max-w-[1400px] mx-auto">
+
+            {/* Page header */}
+            <div className="flex items-center justify-between">
+                <div>
+                    <h1 className="text-2xl font-black text-[#003087]">Admin Overview</h1>
+                    <p className="text-gray-500 text-sm">MetroSync Network Control — Real-time dashboard</p>
+                </div>
+                <div className="flex items-center gap-2 text-xs font-bold text-[#00873D] bg-green-50 border border-green-200 px-3 py-2 rounded-xl">
+                    <span className="w-2 h-2 rounded-full bg-[#00873D] animate-pulse" />
+                    All Systems Operational
+                </div>
             </div>
 
-            <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-sm p-6">
-
-                {/* Legend */}
-                <div className="flex flex-wrap items-center gap-6 mb-8 p-4 bg-slate-50 dark:bg-slate-800/50 rounded-xl border border-slate-100 dark:border-slate-800/80">
-                    <div className="flex items-center gap-2">
-                        <div className="w-4 h-4 rounded bg-emerald-500 shadow-sm shadow-emerald-500/20"></div>
-                        <span className="text-sm font-medium text-slate-700 dark:text-slate-300">Direct Upgrade</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                        <div className="w-4 h-4 rounded bg-amber-500 shadow-sm shadow-amber-500/20"></div>
-                        <span className="text-sm font-medium text-slate-700 dark:text-slate-300">Requires Intermediate Stop</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                        <div className="w-4 h-4 rounded bg-rose-500 shadow-sm shadow-rose-500/20"></div>
-                        <span className="text-sm font-medium text-slate-700 dark:text-slate-300">Blocked</span>
-                    </div>
-                </div>
-
-                <div className="overflow-x-auto pb-4">
-                    <div className="min-w-[600px]">
-                        {/* Header Row (Targets) */}
-                        <div className="flex mb-2">
-                            <div className="w-32 flex-shrink-0"></div> {/* Corner */}
-                            <div className="flex-1 grid grid-cols-5 gap-2">
-                                {VERSIONS.map(target => (
-                                    <div key={target} className="text-center text-sm font-bold text-slate-500 dark:text-slate-400 pb-2 border-b-2 border-slate-100 dark:border-slate-800">
-                                        Target<br />{target}
-                                    </div>
-                                ))}
+            {/* KPI Cards */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
+                {KPI_CARDS.map(({ label, value, change, up, icon: Icon, color, bg }, i) => (
+                    <motion.div
+                        key={label}
+                        initial={{ opacity: 0, y: 16 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: i * 0.07 }}
+                        className="bg-white rounded-2xl border border-gray-200 p-5 shadow-sm hover:shadow-md transition-shadow"
+                    >
+                        <div className="flex items-start justify-between mb-3">
+                            <div className="w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0" style={{ backgroundColor: bg }}>
+                                <Icon size={20} style={{ color }} />
                             </div>
+                            <span className={`flex items-center gap-1 text-xs font-bold px-2 py-1 rounded-lg ${up ? 'text-[#00873D] bg-green-50' : 'text-[#D7231A] bg-red-50'}`}>
+                                {up ? <ArrowUpRight size={12} /> : <ArrowDownRight size={12} />}
+                                {change}
+                            </span>
                         </div>
+                        <p className="text-2xl font-black text-gray-900 mb-0.5">{value}</p>
+                        <p className="text-xs text-gray-500 font-semibold">{label}</p>
+                    </motion.div>
+                ))}
+            </div>
 
-                        {/* Rows (Sources) */}
-                        <div className="space-y-2">
-                            {VERSIONS.map(source => (
-                                <div key={source} className="flex items-center">
-                                    <div className="w-32 flex-shrink-0 text-sm font-bold text-slate-700 dark:text-slate-300 pr-4 text-right">
-                                        Source {source}
+            {/* Main grid */}
+            <div className="grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-5">
+
+                {/* Recent Bookings table */}
+                <motion.div
+                    initial={{ opacity: 0, y: 16 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.3 }}
+                    className="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden"
+                >
+                    <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100">
+                        <div className="flex items-center gap-2">
+                            <TicketCheck size={16} className="text-[#D7231A]" />
+                            <h2 className="font-black text-gray-800 text-sm">Recent Bookings</h2>
+                        </div>
+                        <Link to="/admin/tickets" className="text-xs font-bold text-[#003087] hover:text-[#D7231A] transition-colors flex items-center gap-1">
+                            View All <ChevronRight size={12} />
+                        </Link>
+                    </div>
+
+                    <table className="w-full text-sm">
+                        <thead>
+                            <tr className="border-b border-gray-100 bg-gray-50">
+                                <th className="text-left px-5 py-2.5 text-xs font-black text-gray-500 uppercase tracking-wider">Ticket ID</th>
+                                <th className="text-left px-3 py-2.5 text-xs font-black text-gray-500 uppercase tracking-wider">Journey</th>
+                                <th className="text-left px-3 py-2.5 text-xs font-black text-gray-500 uppercase tracking-wider">Time</th>
+                                <th className="text-left px-3 py-2.5 text-xs font-black text-gray-500 uppercase tracking-wider">Fare</th>
+                                <th className="text-left px-3 py-2.5 text-xs font-black text-gray-500 uppercase tracking-wider">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody className="divide-y divide-gray-100">
+                            {RECENT_BOOKINGS.map((b, i) => (
+                                <motion.tr key={b.id}
+                                    initial={{ opacity: 0, x: -8 }}
+                                    animate={{ opacity: 1, x: 0 }}
+                                    transition={{ delay: 0.35 + i * 0.05 }}
+                                    className="hover:bg-gray-50 transition-colors cursor-pointer group"
+                                >
+                                    <td className="px-5 py-3">
+                                        <span className="font-mono font-bold text-xs text-[#003087]">{b.id}</span>
+                                    </td>
+                                    <td className="px-3 py-3">
+                                        <span className="font-semibold text-gray-800">{b.from}</span>
+                                        <span className="text-gray-400 mx-1">→</span>
+                                        <span className="font-semibold text-gray-800">{b.to}</span>
+                                    </td>
+                                    <td className="px-3 py-3 text-gray-500 text-xs font-semibold">{b.time}</td>
+                                    <td className="px-3 py-3 font-black text-[#D7231A]">{b.fare}</td>
+                                    <td className="px-3 py-3">
+                                        <span className={`text-[10px] font-black px-2.5 py-1 rounded-full ${b.status === 'Active'
+                                            ? 'bg-green-50 text-[#00873D] border border-green-200'
+                                            : 'bg-gray-100 text-gray-500 border border-gray-200'
+                                            }`}>
+                                            {b.status === 'Active' && <span className="inline-block w-1.5 h-1.5 rounded-full bg-[#00873D] mr-1 animate-pulse" />}
+                                            {b.status}
+                                        </span>
+                                    </td>
+                                </motion.tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </motion.div>
+
+                {/* Right column: Line status */}
+                <div className="space-y-5">
+                    <motion.div
+                        initial={{ opacity: 0, x: 12 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: 0.35 }}
+                        className="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden"
+                    >
+                        <div className="flex items-center gap-2 px-4 py-3 bg-[#003087]">
+                            <Activity size={15} className="text-blue-300" />
+                            <h3 className="font-black text-white text-sm">Line Status</h3>
+                            <span className="ml-auto text-[10px] bg-[#00873D] text-white font-bold px-2 py-0.5 rounded-full">LIVE</span>
+                        </div>
+                        <div className="divide-y divide-gray-100">
+                            {LINE_STATUS.map((l, i) => (
+                                <motion.div key={l.line}
+                                    initial={{ opacity: 0 }}
+                                    animate={{ opacity: 1 }}
+                                    transition={{ delay: 0.4 + i * 0.06 }}
+                                    className="flex items-center gap-3 px-4 py-3 hover:bg-gray-50 transition-colors">
+                                    <span className="w-3 h-3 rounded-full flex-shrink-0" style={{ backgroundColor: l.color }} />
+                                    <div className="flex-1 min-w-0">
+                                        <p className="font-bold text-gray-800 text-sm truncate">{l.line}</p>
+                                        <p className="text-xs text-gray-400">{l.stations} stations · {l.freq}</p>
                                     </div>
-                                    <div className="flex-1 grid grid-cols-5 gap-2">
-                                        {VERSIONS.map(target => {
-                                            const status = MATRIX[source][target];
-                                            const bgColor =
-                                                status === 'green' ? 'bg-emerald-100 dark:bg-emerald-500/20 border-emerald-300 dark:border-emerald-500/30' :
-                                                    status === 'amber' ? 'bg-amber-100 dark:bg-amber-500/20 border-amber-300 dark:border-amber-500/30' :
-                                                        'bg-rose-100 dark:bg-rose-500/20 border-rose-300 dark:border-rose-500/30';
-
-                                            const iconColor =
-                                                status === 'green' ? 'text-emerald-600 dark:text-emerald-400' :
-                                                    status === 'amber' ? 'text-amber-600 dark:text-amber-400' :
-                                                        'text-rose-600 dark:text-rose-400';
-
-                                            return (
-                                                <div
-                                                    key={`${source}-${target}`}
-                                                    className={`group relative h-12 rounded-lg border flex items-center justify-center transition-all hover:scale-105 cursor-help ${bgColor}`}
-                                                >
-                                                    <Info size={16} className={`opacity-50 group-hover:opacity-100 transition-opacity ${iconColor}`} />
-
-                                                    {/* Tooltip */}
-                                                    <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-48 p-2 bg-slate-900 dark:bg-slate-800 text-white text-xs text-center rounded-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all shadow-xl z-10 pointer-events-none">
-                                                        <div className="font-bold mb-1 border-b border-slate-700 pb-1">
-                                                            {source} &rarr; {target}
-                                                        </div>
-                                                        {TOOLTIPS[status]}
-                                                        {/* Tooltip Arrow */}
-                                                        <div className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-slate-900 dark:border-t-slate-800"></div>
-                                                    </div>
-                                                </div>
-                                            );
-                                        })}
-                                    </div>
-                                </div>
+                                    <span className={`text-[10px] font-black px-2 py-1 rounded-full flex-shrink-0 ${l.status === 'Operational'
+                                        ? 'bg-green-50 text-[#00873D]'
+                                        : 'bg-yellow-50 text-amber-600'
+                                        }`}>
+                                        {l.status === 'Operational'
+                                            ? <><CheckCircle2 size={10} className="inline mr-1" />OK</>
+                                            : <><AlertCircle size={10} className="inline mr-1" />Delay</>}
+                                    </span>
+                                </motion.div>
                             ))}
                         </div>
-                    </div>
-                </div>
+                    </motion.div>
 
+                    {/* Quick links */}
+                    <motion.div
+                        initial={{ opacity: 0, x: 12 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: 0.45 }}
+                        className="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden"
+                    >
+                        <div className="px-4 py-3 border-b border-gray-100">
+                            <h3 className="font-black text-gray-800 text-sm">Quick Actions</h3>
+                        </div>
+                        <div className="p-3 space-y-2">
+                            {[
+                                { label: 'View All Passengers', to: '/admin/users', color: '#D7231A', bg: '#FEF2F2' },
+                                { label: 'Manage Network Lines', to: '/admin/lines', color: '#003087', bg: '#EFF6FF' },
+                                { label: 'Bulk Import Data', to: '/admin/import', color: '#00873D', bg: '#F0FDF4' },
+                                { label: 'View Network Map', to: '/map', color: '#7C3AED', bg: '#F5F3FF' },
+                            ].map(({ label, to, color, bg }) => (
+                                <Link key={label} to={to}
+                                    className="flex items-center justify-between px-3 py-2.5 rounded-xl font-bold text-sm transition-all hover:translate-x-1 hover:shadow-sm"
+                                    style={{ backgroundColor: bg, color }}>
+                                    {label} <ChevronRight size={14} />
+                                </Link>
+                            ))}
+                        </div>
+                    </motion.div>
+                </div>
             </div>
         </div>
-    );
+    )
 }

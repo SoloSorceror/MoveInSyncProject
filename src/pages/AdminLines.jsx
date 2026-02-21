@@ -44,18 +44,18 @@ function SortableStationItem({ id, stationName, onRemove, isInterchange }) {
         <div
             ref={setNodeRef}
             style={style}
-            className={`flex items-center gap-4 p-4 mb-2 bg-white dark:bg-slate-800 border rounded-xl shadow-sm transition-all ${isDragging ? 'border-indigo-500 shadow-lg ring-2 ring-indigo-500/20 opacity-90' : 'border-slate-200 dark:border-slate-700'
+            className={`flex items-center gap-4 p-4 mb-2 bg-white border rounded-xl shadow-sm transition-all ${isDragging ? 'border-[#003087] shadow-lg ring-2 ring-[#003087]/20 opacity-90' : 'border-gray-200'
                 }`}
         >
             <div
                 {...attributes}
                 {...listeners}
-                className="cursor-grab active:cursor-grabbing p-2 -ml-2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors"
+                className="cursor-grab active:cursor-grabbing p-2 -ml-2 text-gray-400 hover:text-[#003087] transition-colors"
             >
                 <GripVertical size={20} />
             </div>
 
-            <div className={`w-10 h-10 rounded-full flex flex-shrink-0 items-center justify-center font-bold ${isInterchange ? 'bg-indigo-100 dark:bg-indigo-500/20 text-indigo-600 dark:text-indigo-400 ring-2 ring-indigo-500/30' : 'bg-slate-100 dark:bg-slate-700 text-slate-500 dark:text-slate-400'}`}>
+            <div className={`w-10 h-10 rounded-full flex flex-shrink-0 items-center justify-center font-bold ${isInterchange ? 'bg-blue-50 text-[#003087] ring-2 ring-[#003087]/30' : 'bg-gray-100 text-gray-500'}`}>
                 {isInterchange ? <ArrowRightLeft size={18} /> : <Train size={18} />}
             </div>
 
@@ -63,14 +63,14 @@ function SortableStationItem({ id, stationName, onRemove, isInterchange }) {
                 <div className="flex flex-col">
                     <span className="font-medium text-slate-800 dark:text-white">{stationName}</span>
                     {isInterchange && (
-                        <span className="text-xs font-semibold text-indigo-500 dark:text-indigo-400 mt-0.5">Interchange Hub</span>
+                        <span className="text-xs font-semibold text-[#003087] mt-0.5">Interchange Hub</span>
                     )}
                 </div>
 
                 {/* Remove button (doesn't trigger drag) */}
                 <button
                     onClick={() => onRemove(id)}
-                    className="p-2 text-slate-400 hover:text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-500/10 rounded-lg transition-colors"
+                    className="p-2 text-gray-400 hover:text-[#D7231A] hover:bg-red-50 rounded-lg transition-colors"
                     title="Remove Station"
                 >
                     <Trash2 size={18} />
@@ -169,42 +169,42 @@ export default function AdminLines() {
     };
 
     return (
-        <div className="max-w-5xl mx-auto space-y-8 animate-fade-in">
+        <div className="max-w-5xl mx-auto space-y-6">
             <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
                 <div>
-                    <h1 className="text-2xl font-bold text-slate-800 dark:text-white mb-2">Route Management</h1>
-                    <p className="text-slate-500 dark:text-slate-400">Reorder stations via Drag & Drop. Add new stations or remove existing ones. Interchanges are auto-detected.</p>
+                    <h1 className="text-2xl font-black text-[#003087] mb-1">Route Management</h1>
+                    <p className="text-gray-500 text-sm">Drag & drop to reorder stations. Add or remove stops. Interchanges are auto-detected.</p>
                 </div>
 
                 <button
                     onClick={handleSaveSequence}
                     disabled={saveStatus === 'saving'}
-                    className="flex items-center gap-2 px-6 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-semibold transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-md shadow-indigo-600/20"
+                    className="flex items-center gap-2 px-6 py-2.5 bg-[#003087] hover:bg-blue-900 text-white rounded-xl font-bold transition-all disabled:opacity-50 shadow-md"
                 >
                     <Save size={18} />
-                    {saveStatus === 'saving' ? 'Saving Routes...' : saveStatus === 'saved' ? 'Routes Saved!' : 'Save Routes'}
+                    {saveStatus === 'saving' ? 'Saving...' : saveStatus === 'saved' ? '✓ Saved!' : 'Save Routes'}
                 </button>
             </div>
 
             <div className="flex flex-col md:flex-row gap-8 items-start">
 
                 {/* Line Selector Sidebar */}
-                <div className="w-full md:w-64 flex-shrink-0 flex flex-col gap-2">
-                    <h3 className="text-sm font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2 px-2">Network Lines</h3>
+                <div className="w-full md:w-56 flex-shrink-0 flex flex-col gap-1.5">
+                    <p className="text-[11px] font-black text-gray-400 uppercase tracking-widest mb-2 px-2">Network Lines</p>
                     {network.map(line => (
                         <button
                             key={line.id}
                             onClick={() => setActiveLineId(line.id)}
-                            className={`flex justify-between items-center px-4 py-3 rounded-xl font-medium transition-all ${activeLineId === line.id
-                                    ? 'bg-white dark:bg-slate-800 text-slate-900 dark:text-white shadow-sm ring-1 ring-slate-200 dark:ring-slate-700'
-                                    : 'text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800/50'
+                            className={`flex justify-between items-center px-4 py-3 rounded-xl font-semibold text-sm transition-all ${activeLineId === line.id
+                                ? 'bg-[#003087] text-white shadow-sm'
+                                : 'text-gray-600 hover:bg-gray-100 bg-gray-50 border border-gray-200'
                                 }`}
                         >
                             <div className="flex items-center gap-3">
                                 <span className={`w-3 h-3 rounded-full ${line.color}`} />
                                 {line.name}
                             </div>
-                            <span className="text-xs bg-slate-200 dark:bg-slate-700 px-2 py-0.5 rounded-md text-slate-600 dark:text-slate-300">
+                            <span className={`text-xs px-2 py-0.5 rounded-md font-bold ${activeLineId === line.id ? 'bg-white/20 text-white' : 'bg-gray-200 text-gray-600'}`}>
                                 {line.stations.length}
                             </span>
                         </button>
@@ -212,12 +212,12 @@ export default function AdminLines() {
                 </div>
 
                 {/* DnD Editor Area */}
-                <div className="flex-1 w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 shadow-sm min-h-[600px] flex flex-col">
+                <div className="flex-1 w-full bg-white border border-gray-200 rounded-2xl p-6 shadow-sm min-h-[600px] flex flex-col">
 
                     {/* Header + Add Station Form */}
-                    <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-4 mb-6 pb-6 border-b border-slate-100 dark:border-slate-800">
+                    <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-4 mb-6 pb-6 border-b border-gray-100">
                         <div>
-                            <h2 className="text-xl font-bold text-slate-800 dark:text-white flex items-center gap-2">
+                            <h2 className="text-lg font-black text-gray-800 flex items-center gap-2">
                                 <span className={`w-4 h-4 rounded-full ${activeLine?.color}`} />
                                 {activeLine?.name} Sequence
                             </h2>
@@ -229,12 +229,12 @@ export default function AdminLines() {
                                 placeholder="Add new station..."
                                 value={newStationName}
                                 onChange={(e) => setNewStationName(e.target.value)}
-                                className="pl-4 pr-12 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500/50 w-full text-slate-800 dark:text-white transition-all shadow-inner"
+                                className="pl-4 pr-12 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:border-[#003087] focus:ring-2 focus:ring-[#003087]/20 w-full text-gray-800 transition-all"
                             />
                             <button
                                 type="submit"
                                 disabled={!newStationName.trim()}
-                                className="absolute right-1 top-1 bottom-1 px-2.5 bg-indigo-100 text-indigo-600 dark:bg-indigo-500/20 dark:text-indigo-400 rounded-lg hover:bg-indigo-200 dark:hover:bg-indigo-500/30 transition-colors disabled:opacity-50"
+                                className="absolute right-1 top-1 bottom-1 px-2.5 bg-blue-50 text-[#003087] rounded-lg hover:bg-blue-100 transition-colors disabled:opacity-50"
                             >
                                 <Plus size={18} />
                             </button>
@@ -267,9 +267,9 @@ export default function AdminLines() {
                                 </SortableContext>
                             </DndContext>
                         ) : (
-                            <div className="h-full flex flex-col items-center justify-center text-slate-400 py-12">
+                            <div className="h-full flex flex-col items-center justify-center text-gray-400 py-12">
                                 <Train size={48} className="mb-4 opacity-20" />
-                                <p>No stations on this line.</p>
+                                <p className="font-semibold">No stations on this line.</p>
                                 <p className="text-sm">Add a station using the input above.</p>
                             </div>
                         )}
