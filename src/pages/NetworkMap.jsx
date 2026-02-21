@@ -150,30 +150,34 @@ export default function NetworkMap() {
                     </div>
 
                     <TransformWrapper
-                        initialScale={1}
-                        initialPositionX={0}
-                        initialPositionY={0}
-                        minScale={0.2}
-                        maxScale={4}
-                        wheel={{ wheelDisabled: true }}
+                        initialScale={0.55}
+                        minScale={0.25}
+                        maxScale={5}
+                        centerOnInit={true}
+                        wheel={{ step: 0.08 }}
+                        limitToBounds={false}
+                        doubleClick={{ mode: 'zoomIn', step: 0.5 }}
                     >
                         {({ zoomIn, zoomOut, resetTransform }) => (
                             <>
-                                <div className="absolute right-6 bottom-6 z-20 flex flex-col gap-3 glass-panel p-3 rounded-2xl bg-white/90 dark:bg-slate-800/90 backdrop-blur-md border border-slate-200 dark:border-slate-700 shadow-[0_10px_40px_rgba(0,0,0,0.2)]">
-                                    <button onClick={() => zoomIn()} className="p-3 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-xl transition-colors shadow-sm">
-                                        <ZoomIn size={24} className="text-slate-700 dark:text-slate-300" />
+                                <div className="absolute right-6 bottom-6 z-20 flex flex-col gap-3 p-3 rounded-2xl bg-white/90 dark:bg-slate-800/90 backdrop-blur-md border border-slate-200 dark:border-slate-700 shadow-xl">
+                                    <button onClick={() => zoomIn(0.3)} aria-label="Zoom in" className="p-3 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-xl transition-colors">
+                                        <ZoomIn size={22} className="text-slate-700 dark:text-slate-300" />
                                     </button>
-                                    <div className="w-full h-px bg-slate-200 dark:bg-slate-700"></div>
-                                    <button onClick={() => zoomOut()} className="p-3 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-xl transition-colors shadow-sm">
-                                        <ZoomOut size={24} className="text-slate-700 dark:text-slate-300" />
+                                    <div className="w-full h-px bg-slate-200 dark:bg-slate-700" />
+                                    <button onClick={() => zoomOut(0.3)} aria-label="Zoom out" className="p-3 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-xl transition-colors">
+                                        <ZoomOut size={22} className="text-slate-700 dark:text-slate-300" />
                                     </button>
-                                    <div className="w-full h-px bg-slate-200 dark:bg-slate-700"></div>
-                                    <button onClick={() => resetTransform()} className="p-3 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-xl transition-colors shadow-sm">
-                                        <Maximize size={24} className="text-slate-700 dark:text-slate-300" />
+                                    <div className="w-full h-px bg-slate-200 dark:bg-slate-700" />
+                                    <button onClick={() => resetTransform()} aria-label="Reset view" className="p-3 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-xl transition-colors">
+                                        <Maximize size={22} className="text-slate-700 dark:text-slate-300" />
                                     </button>
                                 </div>
 
-                                <TransformComponent wrapperClass="w-full h-full bg-[#f8fafc] dark:bg-[#020617] cursor-grab active:cursor-grabbing" contentClass="w-full h-full flex items-center justify-center">
+                                <TransformComponent
+                                    wrapperClass="!w-full !h-full bg-[#f8fafc] dark:bg-[#020617] cursor-grab active:cursor-grabbing"
+                                    contentClass="flex items-center justify-center"
+                                >
                                     <div className="w-[1200px] h-[900px]">
                                         <svg width="100%" height="100%" viewBox="0 0 1200 900" className="opacity-95 drop-shadow-sm">
 

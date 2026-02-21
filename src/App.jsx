@@ -1,35 +1,74 @@
+import { lazy, Suspense } from 'react'
 import { Routes, Route } from 'react-router-dom'
 import MainLayout from '@/layouts/MainLayout'
 import AdminLayout from '@/layouts/AdminLayout'
-import AdminDashboard from '@/pages/AdminDashboard'
-import AdminLines from '@/pages/AdminLines'
-import AdminBulkImport from '@/pages/AdminBulkImport'
-import Home from '@/pages/Home'
-import Login from '@/pages/Login'
-import Register from '@/pages/Register'
-import Dashboard from '@/pages/Dashboard'
-import NetworkMap from '@/pages/NetworkMap'
-import BookingConfirmation from '@/pages/BookingConfirmation'
+import ProtectedRoute from '@/components/ProtectedRoute'
+
+// Lazy-loaded pages for code splitting
+const Home = lazy(() => import('@/pages/Home'))
+const Login = lazy(() => import('@/pages/Login'))
+const Register = lazy(() => import('@/pages/Register'))
+const Dashboard = lazy(() => import('@/pages/Dashboard'))
+const NetworkMap = lazy(() => import('@/pages/NetworkMap'))
+const BookingConfirmation = lazy(() => import('@/pages/BookingConfirmation'))
+const AdminDashboard = lazy(() => import('@/pages/AdminDashboard'))
+const AdminLines = lazy(() => import('@/pages/AdminLines'))
+const AdminBulkImport = lazy(() => import('@/pages/AdminBulkImport'))
+
+// Full-screen skeleton fallback
+function PageSkeleton() {
+    return (
+        <div className="flex items-center justify-center min-h-screen bg-slate-50 dark:bg-slate-950">
+            <div className="flex flex-col items-center gap-4">
+                <div className="w-12 h-12 rounded-xl bg-metro-primary/20 animate-pulse flex items-center justify-center">
+                    <div className="w-6 h-6 rounded bg-metro-primary/40 animate-pulse" />
+                </div>
+                <div className="flex items-center gap-2">
+                    <div className="w-2 h-2 rounded-full bg-metro-primary animate-bounce [animation-delay:0ms]" />
+                    <div className="w-2 h-2 rounded-full bg-metro-primary animate-bounce [animation-delay:150ms]" />
+                    <div className="w-2 h-2 rounded-full bg-metro-primary animate-bounce [animation-delay:300ms]" />
+                </div>
+            </div>
+        </div>
+    )
+}
 
 function App() {
     return (
-        <Routes>
-            <Route element={<MainLayout />}>
-                <Route path="/" element={<Home />} />
-                <Route path="/login" element={<Login />} />
-                <Route path="/register" element={<Register />} />
-                <Route path="/dashboard" element={<Dashboard />} />
-                <Route path="/map" element={<NetworkMap />} />
-                <Route path="/booking/:id" element={<BookingConfirmation />} />
-            </Route>
+        <Suspense fallback={<PageSkeleton />}>
+            <Routes>
+                {/* Public Passenger Routes */}
+                <Route element={<MainLayout />}>
+                    <Route path="/" element={<Home />} />
+                    <Route path="/login" element={<Login />} />
+                    <Route path="/register" element={<Register />} />
+                    <Route path="/map" element={<NetworkMap />} />
 
-            {/* Secure Admin Routes Wrap */}
-            <Route path="/admin" element={<AdminLayout />}>
-                <Route index element={<AdminDashboard />} />
-                <Route path="lines" element={<AdminLines />} />
-                <Route path="import" element={<AdminBulkImport />} />
-            </Route>
-        </Routes>
+                    {/* Protected: logged-in users only */}
+                    <Route path="/dashboard" element={
+                        <ProtectedRoute>
+                            <Dashboard />
+                        </ProtectedRoute>
+                    } />
+                    <Route path="/booking/:id" element={
+                        <ProtectedRoute>
+                            <BookingConfirmation />
+                        </ProtectedRoute>
+                    } />
+                </Route>
+
+                {/* Protected: Admin-only Routes */}
+                <Route path="/admin" element={
+                    <ProtectedRoute role="admin">
+                        <AdminLayout />
+                    </ProtectedRoute>
+                }>
+                    <Route index element={<AdminDashboard />} />
+                    <Route path="lines" element={<AdminLines />} />
+                    <Route path="import" element={<AdminBulkImport />} />
+                </Route>
+            </Routes>
+        </Suspense>
     )
 }
 
