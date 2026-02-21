@@ -146,15 +146,16 @@ export default function NetworkMap() {
                 >
                     {/* Draggable Warning Overlay */}
                     <div className="absolute top-6 left-1/2 -translate-x-1/2 z-20 bg-slate-900/80 backdrop-blur-md text-white px-6 py-2 rounded-full text-sm font-bold shadow-2xl opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none flex items-center gap-2">
-                        Scroll to Zoom • Drag to Pan
+                        Use Buttons/Pinch to Zoom • Drag to Pan
                     </div>
 
                     <TransformWrapper
-                        initialScale={0.55}
+                        initialScale={1}
+                        initialPositionX={0}
+                        initialPositionY={0}
                         minScale={0.2}
                         maxScale={4}
-                        centerOnInit={true}
-                        wheel={{ smoothStep: 0.01 }}
+                        wheel={{ wheelDisabled: true }}
                     >
                         {({ zoomIn, zoomOut, resetTransform }) => (
                             <>
@@ -173,7 +174,6 @@ export default function NetworkMap() {
                                 </div>
 
                                 <TransformComponent wrapperClass="w-full h-full bg-[#f8fafc] dark:bg-[#020617] cursor-grab active:cursor-grabbing" contentClass="w-full h-full flex items-center justify-center">
-                                    {/* The SVG Canvas using realistic hubs (Same SVG logic as before but with clickable nodes) */}
                                     <div className="w-[1200px] h-[900px]">
                                         <svg width="100%" height="100%" viewBox="0 0 1200 900" className="opacity-95 drop-shadow-sm">
 
@@ -313,8 +313,8 @@ export default function NetworkMap() {
                             </>
                         )}
                     </TransformWrapper>
-                </motion.div>
-            </div>
-        </div>
+                </motion.div >
+            </div >
+        </div >
     );
 }

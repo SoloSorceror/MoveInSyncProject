@@ -29,6 +29,7 @@ export default function Home() {
     const [showResults, setShowResults] = useState(false)
     const [isSwapping, setIsSwapping] = useState(false)
     const [isSearching, setIsSearching] = useState(false)
+    const [tickets, setTickets] = useState(1)
 
     const originRef = useRef(null)
     const destRef = useRef(null)
@@ -224,20 +225,29 @@ export default function Home() {
                             </div>
 
                             {/* Date */}
-                            <div className="w-full lg:w-[220px] px-6 py-4 lg:border-r border-slate-200 dark:border-slate-600 hover:bg-blue-50/30 dark:hover:bg-slate-800/50 transition-colors cursor-pointer group flex items-center gap-4">
-                                <CalendarDays size={32} className="text-metro-primary/40 dark:text-slate-600 group-hover:text-metro-primary dark:group-hover:text-blue-400 transition-colors" />
+                            <div className="w-full lg:w-[220px] px-6 py-4 lg:border-r border-slate-200 dark:border-slate-600 bg-slate-50 dark:bg-slate-800/20 group flex items-center gap-4">
+                                <CalendarDays size={32} className="text-slate-400 dark:text-slate-500" />
                                 <div>
                                     <p className="text-sm font-semibold text-slate-500 dark:text-slate-400">DEPARTURE</p>
-                                    <p className="font-bold text-slate-800 dark:text-white mt-1">Today</p>
+                                    <p className="font-bold text-slate-800 dark:text-white mt-1">Today Only</p>
                                 </div>
                             </div>
 
                             {/* Passengers / Tickets */}
-                            <div className="w-full lg:w-[150px] px-6 py-4 hover:bg-blue-50/30 dark:hover:bg-slate-800/50 transition-colors cursor-pointer group flex items-center gap-4 rounded-r-2xl">
-                                <Users size={32} className="text-metro-primary/40 dark:text-slate-600 group-hover:text-metro-primary dark:group-hover:text-blue-400 transition-colors" />
-                                <div>
-                                    <p className="text-sm font-semibold text-slate-500 dark:text-slate-400">TICKETS</p>
-                                    <p className="font-bold text-slate-800 dark:text-white mt-1">1 Adult</p>
+                            <div className="w-full lg:w-[180px] px-6 py-4 flex flex-col justify-center rounded-r-2xl border-slate-200 dark:border-slate-600 relative">
+                                <p className="text-sm font-semibold text-slate-500 dark:text-slate-400 mb-2">TICKETS (Max 6)</p>
+                                <div className="flex items-center justify-between bg-slate-100 dark:bg-slate-800 rounded-lg p-1">
+                                    <button
+                                        onClick={(e) => { e.stopPropagation(); setTickets(Math.max(1, tickets - 1)); }}
+                                        className="w-8 h-8 flex items-center justify-center rounded-md bg-white dark:bg-slate-700 text-slate-800 dark:text-white shadow-sm hover:bg-slate-50 text-lg font-bold disabled:opacity-50 transition-opacity"
+                                        disabled={tickets <= 1}
+                                    >-</button>
+                                    <span className="font-bold text-slate-800 dark:text-white">{tickets}</span>
+                                    <button
+                                        onClick={(e) => { e.stopPropagation(); setTickets(Math.min(6, tickets + 1)); }}
+                                        className="w-8 h-8 flex items-center justify-center rounded-md bg-white dark:bg-slate-700 text-slate-800 dark:text-white shadow-sm hover:bg-slate-50 text-lg font-bold disabled:opacity-50 transition-opacity"
+                                        disabled={tickets >= 6}
+                                    >+</button>
                                 </div>
                             </div>
                         </div>
