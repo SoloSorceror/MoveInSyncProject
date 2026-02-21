@@ -22,3 +22,7 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Generated Documentation & Samples
+/docs/
+/public/sample-import.csv
