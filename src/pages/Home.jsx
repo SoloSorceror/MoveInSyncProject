@@ -1,13 +1,18 @@
-import { useState, useRef, useEffect } from 'react'
+import { useState, useRef, useEffect, useMemo } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
     ArrowLeftRight, CalendarDays, Users, Search, MapPin,
     ArrowRight, Zap, ChevronRight, Train, Bell, Shield,
     Map, TicketCheck, Navigation, Clock, AlertCircle,
-    CreditCard, TrendingUp, Info, Wifi
+    CreditCard, TrendingUp, Info, Wifi, History, X
 } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
-import { DUMMY_STATIONS, DUMMY_ROUTES } from '@/data/dummyData'
+import { DUMMY_STATIONS, INITIAL_NETWORK } from '@/data/dummyData'
+import { computeRoutes } from '@/utils/routeEngine'
+import { useRecentSearches } from '@/hooks/useRecentSearches'
+import RouteTimeline from '@/components/RouteTimeline'
+import { SkeletonCard } from '@/components/Skeleton'
+import { useUIStore } from '@/store/uiStore'
 import metroImage from '@/assets/metroImage.jpg'
 
 /* ── Constants ──────────────────────────────────────────────────── */
@@ -67,8 +72,23 @@ const CountUp = ({ target, suffix = '', delay = 0 }) => {
 export default function Home() {
     const navigate = useNavigate()
 
-    const [origin, setOrigin] = useState(DUMMY_STATIONS[0])
-    const [dest, setDest] = useState(DUMMY_STATIONS[1])
+    const {
+        searchOrigin, setSearchOrigin,
+        searchDest, setSearchDest,
+        setSelectedRoute
+    } = useUIStore()
+
+    // Initialize if empty
+    useEffect(() => {
+        if (!searchOrigin) setSearchOrigin(DUMMY_STATIONS[0])
+        if (!searchDest) setSearchDest(DUMMY_STATIONS[1])
+    }, [searchOrigin, searchDest, setSearchOrigin, setSearchDest])
+
+    const origin = searchOrigin || DUMMY_STATIONS[0]
+    const dest = searchDest || DUMMY_STATIONS[1]
+    const setOrigin = setSearchOrigin
+    const setDest = setSearchDest
+
     const [tickets, setTickets] = useState(1)
     const [originSearch, setOriginSearch] = useState('')
     const [destSearch, setDestSearch] = useState('')
@@ -77,6 +97,10 @@ export default function Home() {
     const [isSearching, setIsSearching] = useState(false)
     const [showResults, setShowResults] = useState(false)
     const [routeFilter, setRouteFilter] = useState('shortest')
+    const [computedRoutes, setComputedRoutes] = useState([])
+    const [expandedAlt, setExpandedAlt] = useState(false)
+
+    const { recents, addSearch, clearSearches } = useRecentSearches()
 
     const originRef = useRef(null)
     const destRef = useRef(null)
@@ -90,16 +114,32 @@ export default function Home() {
         return () => document.removeEventListener('mousedown', h)
     }, [])
 
-    const filteredOrigin = DUMMY_STATIONS.filter(s => s.name.toLowerCase().includes(originSearch.toLowerCase()))
-    const filteredDest = DUMMY_STATIONS.filter(s => s.name.toLowerCase().includes(destSearch.toLowerCase()))
+    const filteredOrigin = useMemo(() =>
+        DUMMY_STATIONS.filter(s => s.name.toLowerCase().includes(originSearch.toLowerCase())),
+        [originSearch]
+    )
+    const filteredDest = useMemo(() =>
+        DUMMY_STATIONS.filter(s => s.name.toLowerCase().includes(destSearch.toLowerCase())),
+        [destSearch]
+    )
 
     const handleSwap = () => { const tmp = origin; setOrigin(dest); setDest(tmp); setShowResults(false) }
 
     const handleSearch = () => {
-        setIsSearching(true); setShowResults(false)
+        if (!origin || !dest || origin.id === dest.id) return
+        setIsSearching(true); setShowResults(false); setExpandedAlt(false)
         setTimeout(() => {
-            setIsSearching(false); setShowResults(true)
-        }, 1100)
+            const routes = computeRoutes(origin, dest, INITIAL_NETWORK)
+            setComputedRoutes(routes)
+            setIsSearching(false)
+            setShowResults(true)
+            addSearch(origin, dest)   // save to recent searches
+        }, 900)
+    }
+
+    const handleSelectRoute = (route) => {
+        setSelectedRoute(route)
+        navigate(`/booking/${route.id}`)
     }
 
     const StationList = ({ stations, onSelect }) => (
@@ -294,6 +334,36 @@ export default function Home() {
                                 </div>
                             </div>
 
+                            {/* Recent searches */}
+                            {recents.length > 0 && !showOriginDD && !showDestDD && (
+                                <div className="mt-1">
+                                    <div className="flex items-center gap-1 mb-1.5">
+                                        <History size={11} className="text-gray-400" />
+                                        <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Recent</span>
+                                        <button onClick={clearSearches} className="ml-auto text-[10px] text-gray-400 hover:text-gray-600 underline">Clear</button>
+                                    </div>
+                                    <div className="flex flex-col gap-1">
+                                        {recents.map((r, i) => (
+                                            <button key={i}
+                                                onClick={() => { setOrigin(r.from); setDest(r.to); setShowResults(false) }}
+                                                className="flex items-center gap-2 px-3 py-2 rounded-lg bg-gray-50 hover:bg-blue-50 text-left transition-colors border border-gray-100 group"
+                                            >
+                                                <div className="w-6 h-6 rounded-full bg-[#003087]/10 flex items-center justify-center flex-shrink-0">
+                                                    <History size={11} className="text-[#003087]" />
+                                                </div>
+                                                <div className="flex-1 min-w-0">
+                                                    <p className="text-xs font-bold text-gray-700 truncate">{r.from.name}</p>
+                                                    <p className="text-[10px] text-gray-400 flex items-center gap-1">
+                                                        <ArrowRight size={9} /> {r.to.name}
+                                                    </p>
+                                                </div>
+                                                <ChevronRight size={12} className="text-gray-300 group-hover:text-[#003087] transition-colors" />
+                                            </button>
+                                        ))}
+                                    </div>
+                                </div>
+                            )}
+
                             {/* Search button */}
                             <button onClick={handleSearch} disabled={isSearching}
                                 className="w-full flex items-center justify-center gap-2 py-3 bg-[#D7231A] text-white rounded-xl font-black text-base hover:bg-red-700 active:scale-[0.98] transition-all shadow-md shadow-red-400/30 disabled:opacity-70">
@@ -337,50 +407,68 @@ export default function Home() {
                                 >
                                     <div className="flex items-center justify-between">
                                         <h3 className="text-base font-black text-[#003087]">
-                                            Available Routes — {origin.name} → {dest.name}
+                                            {origin.name} → {dest.name}
                                         </h3>
-                                        <button onClick={() => setShowResults(false)} className="text-xs text-gray-500 hover:text-gray-700 underline">Clear</button>
+                                        <button onClick={() => setShowResults(false)} className="text-xs text-gray-500 hover:text-gray-700 underline flex items-center gap-1">
+                                            <X size={12} /> Clear
+                                        </button>
                                     </div>
-                                    {DUMMY_ROUTES.map((route, idx) => (
-                                        <motion.div
-                                            key={route.id}
-                                            initial={{ opacity: 0, x: -12 }}
-                                            animate={{ opacity: 1, x: 0 }}
-                                            transition={{ delay: idx * 0.07 }}
-                                            onClick={() => navigate(`/booking/${route.id}`)}
-                                            className="bg-white border border-gray-200 rounded-2xl p-4 hover:border-[#003087]/50 hover:shadow-md transition-all group cursor-pointer flex flex-col sm:flex-row gap-4 sm:items-center justify-between"
-                                        >
-                                            <div className="flex-1">
-                                                <div className="flex items-center gap-2 mb-2 flex-wrap">
-                                                    <span className="text-xs font-bold bg-blue-50 text-[#003087] px-2.5 py-1 rounded-full border border-blue-100">{route.type}</span>
-                                                    <span className="text-gray-500 text-xs flex items-center gap-1"><Clock size={11} /> {route.duration}</span>
-                                                    <span className="text-gray-500 text-xs flex items-center gap-1"><MapPin size={11} /> {route.stops} stops</span>
-                                                </div>
-                                                <div className="flex items-center gap-1.5 flex-wrap">
-                                                    {route.segments.map((seg, sIdx) => (
-                                                        <div key={sIdx} className="flex items-center gap-1.5">
-                                                            <span className={`w-2.5 h-2.5 rounded-full ${seg.color}`} />
-                                                            <span className="font-bold text-gray-800 text-sm">{seg.from}</span>
-                                                            {sIdx < route.segments.length - 1 && <ArrowRight size={12} className="text-gray-400" />}
-                                                            {sIdx === route.segments.length - 1 && <><ArrowRight size={12} className="text-gray-400" /><span className="font-bold text-gray-800 text-sm">{seg.to}</span></>}
-                                                        </div>
-                                                    ))}
-                                                </div>
+
+                                    {computedRoutes.length === 0 ? (
+                                        /* ── Empty state */
+                                        <div className="bg-white border border-gray-200 rounded-2xl p-8 text-center">
+                                            <div className="w-14 h-14 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                                                <Train size={24} className="text-gray-400" />
                                             </div>
-                                            <div className="flex sm:flex-col items-center gap-3 sm:gap-2 border-t sm:border-t-0 sm:border-l border-gray-200 pt-3 sm:pt-0 sm:pl-4 sm:min-w-[90px]">
-                                                <span className="text-xl font-black text-[#003087]">{route.price}</span>
-                                                <button className="px-4 py-1.5 bg-[#D7231A] text-white text-xs font-bold rounded-lg hover:bg-red-700 transition-colors flex items-center gap-1">
-                                                    Select <ArrowRight size={11} className="group-hover:translate-x-0.5 transition-transform" />
-                                                </button>
+                                            <p className="font-black text-gray-700 mb-1">No Route Found</p>
+                                            <p className="text-sm text-gray-400">We couldn't find a route between these stations. Try selecting different stations or check the network map.</p>
+                                        </div>
+                                    ) : (
+                                        <>
+                                            {/* ── Recommended Route */}
+                                            <div className="bg-white border-2 border-[#003087] rounded-2xl p-5 shadow-sm">
+                                                <RouteTimeline
+                                                    route={computedRoutes[0]}
+                                                    onSelect={handleSelectRoute}
+                                                />
                                             </div>
-                                        </motion.div>
-                                    ))}
+
+                                            {/* ── Alternative Routes (collapsible) */}
+                                            {computedRoutes.length > 1 && (
+                                                <div>
+                                                    <button
+                                                        onClick={() => setExpandedAlt(v => !v)}
+                                                        className="flex items-center gap-2 text-sm font-bold text-[#003087] hover:text-[#D7231A] transition-colors mb-2"
+                                                    >
+                                                        <ChevronRight size={15} className={`transition-transform ${expandedAlt ? 'rotate-90' : ''}`} />
+                                                        {expandedAlt ? 'Hide' : 'Show'} {computedRoutes.length - 1} alternative route{computedRoutes.length > 2 ? 's' : ''}
+                                                    </button>
+                                                    <AnimatePresence>
+                                                        {expandedAlt && (
+                                                            <motion.div
+                                                                initial={{ opacity: 0, height: 0 }}
+                                                                animate={{ opacity: 1, height: 'auto' }}
+                                                                exit={{ opacity: 0, height: 0 }}
+                                                                className="space-y-3 overflow-hidden"
+                                                            >
+                                                                {computedRoutes.slice(1).map(route => (
+                                                                    <div key={route.id} className="bg-white border border-gray-200 rounded-2xl p-5">
+                                                                        <RouteTimeline route={route} onSelect={handleSelectRoute} />
+                                                                    </div>
+                                                                ))}
+                                                            </motion.div>
+                                                        )}
+                                                    </AnimatePresence>
+                                                </div>
+                                            )}
+                                        </>
+                                    )}
                                 </motion.div>
                             )}
                         </AnimatePresence>
 
-                        {/* Quick Services Grid (hidden when results are shown) */}
-                        {!showResults && (
+                        {/* Quick Services Grid (hidden when results are shown or loading) */}
+                        {!showResults && !isSearching && (
                             <motion.div
                                 initial={{ opacity: 0, y: 16 }}
                                 animate={{ opacity: 1, y: 0 }}

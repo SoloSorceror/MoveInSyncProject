@@ -27,6 +27,19 @@
   --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
 }
 
+/* ── SVG Path Animation ── */
+.stroke-dasharray-anim {
+  stroke-dasharray: 1000;
+  stroke-dashoffset: 1000;
+  animation: drawPath 3s ease-out forwards;
+}
+
+@keyframes drawPath {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
 /* ─── Base ─────────────────────────────────────────────────────────────────── */
 @layer base {
   body {

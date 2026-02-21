@@ -5,9 +5,9 @@ const DUMMY_PREVIEW_DATA = [
     { id: 'S001', name: 'Rajiv Chowk', line: 'Yellow, Blue', status: 'valid', message: 'Ready to import' },
     { id: 'S002', name: 'Kashmere Gate', line: 'Yellow, Red, Violet', status: 'valid', message: 'Ready to import' },
     { id: 'S003', name: 'New Delhi', line: 'Yellow, Orange', status: 'valid', message: 'Ready to import' },
-    { id: 'S004', name: '', line: 'Blue', status: 'error', message: 'Missing station name' },
-    { id: 'S005', name: 'Botanical Garden', line: 'Blue, Magenta', status: 'warning', message: 'Potential duplicate ID detected' },
-    { id: 'S001', name: 'HUDA City Centre', line: 'Yellow', status: 'error', message: 'Duplicate ID S001' },
+    { id: 'S004', name: 'Yamuna Bank', line: 'Blue', status: 'valid', message: 'Ready to import' },
+    { id: 'S005', name: 'Botanical Garden', line: 'Blue, Magenta', status: 'valid', message: 'Ready to import' },
+    { id: 'S006', name: 'HUDA City Centre', line: 'Yellow', status: 'valid', message: 'Ready to import' },
 ];
 
 export default function AdminBulkImport() {
@@ -42,20 +42,37 @@ export default function AdminBulkImport() {
     };
 
     const simulateImport = () => {
-        setFileStatus('processing');
-        setProgress(0);
+        setFileStatus('processing')
+        setProgress(0)
 
-        const interval = setInterval(() => {
-            setProgress(p => {
-                if (p >= 100) {
-                    clearInterval(interval);
-                    setFileStatus('complete');
-                    return 100;
-                }
-                return p + 5;
-            });
-        }, 100);
-    };
+        const STEPS = [
+            { label: 'Parsing', target: 25 },
+            { label: 'Validating', target: 55 },
+            { label: 'Committing', target: 85 },
+            { label: 'Done', target: 100 },
+        ]
+        let current = 0
+        const advance = () => {
+            if (current >= STEPS.length) return
+            const { target } = STEPS[current]
+            const tick = setInterval(() => {
+                setProgress(p => {
+                    if (p >= target) {
+                        clearInterval(tick)
+                        current++
+                        if (current >= STEPS.length) {
+                            setFileStatus('complete')
+                        } else {
+                            setTimeout(advance, 300)
+                        }
+                        return p
+                    }
+                    return p + 2
+                })
+            }, 40)
+        }
+        advance()
+    }
 
     const hasErrors = DUMMY_PREVIEW_DATA.some(d => d.status === 'error');
 
@@ -129,29 +146,48 @@ export default function AdminBulkImport() {
                             </button>
                         )}
 
-                        {fileStatus === 'processing' && (
-                            <div className="flex items-center gap-3 w-48 bg-slate-50 dark:bg-slate-800 px-4 py-2 rounded-xl border border-slate-200 dark:border-slate-700">
-                                <div className="w-4 h-4 rounded-full border-2 border-indigo-500 border-t-transparent animate-spin"></div>
-                                <span className="text-sm font-semibold text-indigo-600 dark:text-indigo-400">{progress}%</span>
-                                <div className="flex-1 bg-slate-200 dark:bg-slate-700 h-1.5 rounded-full overflow-hidden">
-                                    <div className="bg-indigo-500 h-full transition-all duration-100" style={{ width: `${progress}%` }}></div>
+                        {fileStatus === 'processing' && (() => {
+                            const STEPS = ['Parsing', 'Validating', 'Committing', 'Done']
+                            const stepIdx = progress < 25 ? 0 : progress < 55 ? 1 : progress < 85 ? 2 : 3
+                            return (
+                                <div className="w-full max-w-xs">
+                                    <div className="flex justify-between items-center mb-1.5">
+                                        <span className="text-xs font-bold text-[#003087]">{STEPS[stepIdx]}...</span>
+                                        <span className="text-xs font-bold text-[#003087]">{progress}%</span>
+                                    </div>
+                                    {/* Steps */}
+                                    <div className="flex gap-1 mb-2">
+                                        {STEPS.map((s, si) => (
+                                            <div key={s} className={`flex-1 h-1.5 rounded-full transition-colors duration-500 ${si < stepIdx ? 'bg-[#00873D]'
+                                                : si === stepIdx ? 'bg-[#003087] animate-pulse'
+                                                    : 'bg-gray-200'
+                                                }`} />
+                                        ))}
+                                    </div>
+                                    {/* Bar */}
+                                    <div className="w-full bg-gray-200 rounded-full h-2 overflow-hidden">
+                                        <div className="bg-[#003087] h-full rounded-full transition-all duration-100" style={{ width: `${progress}%` }} />
+                                    </div>
+                                    <p className="text-[10px] text-gray-400 mt-1">Processing {DUMMY_PREVIEW_DATA.filter(d => d.status !== 'error').length} valid records...</p>
                                 </div>
-                            </div>
-                        )}
+                            )
+                        })()}
 
                         {fileStatus === 'complete' && (
-                            <div className="flex items-center gap-2 px-5 py-2 bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 rounded-xl font-semibold border border-emerald-200 dark:border-emerald-500/30">
-                                <Check size={18} />
-                                Import Success
+                            <div className="flex items-center gap-2 px-5 py-2 bg-[#00873D] text-white rounded-xl font-bold text-sm">
+                                <Check size={16} /> {DUMMY_PREVIEW_DATA.filter(d => d.status !== 'error').length} records imported!
                             </div>
                         )}
                     </div>
 
                     {fileStatus === 'idle' ? (
-                        <div className="flex-1 flex flex-col items-center justify-center text-slate-400 py-12">
+                        <div className="flex-1 flex flex-col items-center justify-center text-gray-400 py-12">
                             <ArrowUpFromLine size={48} className="mb-4 opacity-20" />
-                            <p>No file uploaded yet.</p>
+                            <p className="font-semibold">No file uploaded yet.</p>
                             <p className="text-sm">Upload a valid data file to see the preview table.</p>
+                            <p className="text-xs text-[#003087] mt-2">
+                                Try: <a href="/sample-import.csv" download className="underline font-bold">Download sample-import.csv</a>
+                            </p>
                         </div>
                     ) : (
                         <div className="flex-1 overflow-x-auto">
@@ -188,11 +224,11 @@ export default function AdminBulkImport() {
                                 </tbody>
                             </table>
                             {hasErrors && (
-                                <div className="mt-4 p-3 bg-rose-50 dark:bg-rose-500/10 border border-rose-200 dark:border-rose-500/30 rounded-xl flex items-start gap-3">
-                                    <AlertCircle className="text-rose-500 shrink-0 mt-0.5" size={18} />
+                                <div className="mt-4 p-3 bg-red-50 border border-red-200 rounded-xl flex items-start gap-3">
+                                    <AlertCircle className="text-[#D7231A] shrink-0 mt-0.5" size={18} />
                                     <div>
-                                        <h4 className="font-semibold text-rose-800 dark:text-rose-300 text-sm">Cannot proceed with import</h4>
-                                        <p className="text-rose-600 dark:text-rose-400 text-xs mt-1">Please fix the highlighted row constraints (duplicate IDs, undefined names) in your source file and re-upload.</p>
+                                        <h4 className="font-bold text-[#D7231A] text-sm">Cannot proceed with import</h4>
+                                        <p className="text-red-600 text-xs mt-1">Fix duplicate IDs and missing station names in your source file, then re-upload.</p>
                                     </div>
                                 </div>
                             )}

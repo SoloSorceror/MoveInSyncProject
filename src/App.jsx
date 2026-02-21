@@ -3,6 +3,7 @@ import { Routes, Route } from 'react-router-dom'
 import MainLayout from '@/layouts/MainLayout'
 import AdminLayout from '@/layouts/AdminLayout'
 import ProtectedRoute from '@/components/ProtectedRoute'
+import { ErrorBoundary } from '@/components/ErrorBoundary'
 
 // Lazy-loaded pages for code splitting
 const Home = lazy(() => import('@/pages/Home'))
@@ -14,6 +15,7 @@ const BookingConfirmation = lazy(() => import('@/pages/BookingConfirmation'))
 const AdminDashboard = lazy(() => import('@/pages/AdminDashboard'))
 const AdminLines = lazy(() => import('@/pages/AdminLines'))
 const AdminBulkImport = lazy(() => import('@/pages/AdminBulkImport'))
+const AdminMatrix = lazy(() => import('@/pages/AdminMatrix'))
 const Profile = lazy(() => import('@/pages/Profile'))
 
 // Full-screen skeleton fallback
@@ -36,48 +38,48 @@ function PageSkeleton() {
 
 function App() {
     return (
-        <Suspense fallback={<PageSkeleton />}>
-            <Routes>
-                {/* Public Passenger Routes */}
-                <Route element={<MainLayout />}>
-                    <Route path="/" element={<Home />} />
-                    <Route path="/login" element={<Login />} />
-                    <Route path="/register" element={<Register />} />
-                    <Route path="/map" element={<NetworkMap />} />
+        <ErrorBoundary>
+            <Suspense fallback={<PageSkeleton />}>
+                <Routes>
+                    {/* Public Passenger Routes */}
+                    <Route element={<MainLayout />}>
+                        <Route path="/" element={<Home />} />
+                        <Route path="/login" element={<Login />} />
+                        <Route path="/register" element={<Register />} />
+                        <Route path="/map" element={<NetworkMap />} />
 
-                    {/* Protected: logged-in users only */}
-                    <Route path="/dashboard" element={
-                        <ProtectedRoute>
-                            <Dashboard />
-                        </ProtectedRoute>
-                    } />
-                    <Route path="/booking/:id" element={
-                        <ProtectedRoute>
-                            <BookingConfirmation />
-                        </ProtectedRoute>
-                    } />
-                    <Route path="/profile" element={
-                        <ProtectedRoute>
-                            <Profile />
-                        </ProtectedRoute>
-                    } />
-                </Route>
+                        {/* Protected: logged-in users only */}
+                        <Route path="/dashboard" element={
+                            <ProtectedRoute>
+                                <Dashboard />
+                            </ProtectedRoute>
+                        } />
+                        <Route path="/booking/:id" element={
+                            <ProtectedRoute>
+                                <BookingConfirmation />
+                            </ProtectedRoute>
+                        } />
+                        <Route path="/profile" element={
+                            <ProtectedRoute>
+                                <Profile />
+                            </ProtectedRoute>
+                        } />
+                    </Route>
 
-                {/* Protected: Admin-only Routes */}
-                <Route path="/admin" element={
-                    <ProtectedRoute role="admin">
-                        <AdminLayout />
-                    </ProtectedRoute>
-                }>
-                    <Route index element={<AdminDashboard />} />
-                    <Route path="lines" element={<AdminLines />} />
-                    <Route path="import" element={<AdminBulkImport />} />
-                    <Route path="users" element={<AdminDashboard />} />
-                    <Route path="tickets" element={<AdminDashboard />} />
-                    <Route path="analytics" element={<AdminDashboard />} />
-                </Route>
-            </Routes>
-        </Suspense>
+                    {/* Protected: Admin-only Routes */}
+                    <Route path="/admin" element={
+                        <ProtectedRoute role="admin">
+                            <AdminLayout />
+                        </ProtectedRoute>
+                    }>
+                        <Route index element={<AdminDashboard />} />
+                        <Route path="lines" element={<AdminLines />} />
+                        <Route path="import" element={<AdminBulkImport />} />
+                        <Route path="matrix" element={<AdminMatrix />} />
+                    </Route>
+                </Routes>
+            </Suspense>
+        </ErrorBoundary>
     )
 }
 

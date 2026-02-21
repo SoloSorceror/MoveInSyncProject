@@ -1,9 +1,10 @@
-import { Link } from 'react-router-dom'
-import { motion } from 'framer-motion'
+import { useState, useEffect } from 'react'
+import { Link, useNavigate } from 'react-router-dom'
+import { motion, AnimatePresence } from 'framer-motion'
 import { QRCodeSVG } from 'qrcode.react'
 import {
     CheckCircle2, Download, MapPin, ArrowRight, Train,
-    Calendar, Users, TicketCheck
+    Calendar, Users, TicketCheck, Printer, RotateCcw
 } from 'lucide-react'
 
 /* ── Use the same dummy data shape as Dashboard ──────────────── */
@@ -22,6 +23,27 @@ const TICKET = {
 }
 
 export default function BookingConfirmation() {
+    const navigate = useNavigate()
+    const [qrReady, setQrReady] = useState(false)
+
+    // Simulate async QR generation (1.5s)
+    useEffect(() => {
+        const t = setTimeout(() => setQrReady(true), 1500)
+        return () => clearTimeout(t)
+    }, [])
+
+    const handleDownload = () => {
+        // Open a print-only view of the ticket
+        const printContents = document.getElementById('ticket-card')?.outerHTML
+        if (!printContents) return
+        const win = window.open('', '_blank')
+        win.document.write(`<html><head><title>MetroSync Ticket</title>
+            <style>body{margin:0;display:flex;align-items:center;justify-content:center;min-height:100vh;background:#f3f4f6;font-family:sans-serif}</style>
+            </head><body>${printContents}</body></html>`)
+        win.document.close()
+        setTimeout(() => win.print(), 400)
+    }
+
     return (
         <div className="min-h-[90vh] bg-gray-50 flex flex-col items-center justify-center py-12 px-4">
 
@@ -91,12 +113,22 @@ export default function BookingConfirmation() {
                 </div>
 
                 {/* QR body */}
-                <div className="px-6 pt-4 pb-6">
-                    {/* QR Code */}
+                <div id="ticket-card" className="px-6 pt-4 pb-6">
+                    {/* QR Code — skeleton first, then fade in */}
                     <div className="flex justify-center mb-4">
-                        <div className="bg-white border-2 border-gray-100 rounded-2xl p-4 shadow-sm">
-                            <QRCodeSVG value={TICKET.qrData} size={160} bgColor="#ffffff" fgColor="#003087" level="H" />
-                            <p className="text-center text-[10px] text-gray-400 mt-2 font-mono">{TICKET.id}</p>
+                        <div className="bg-white border-2 border-gray-100 rounded-2xl p-4 shadow-sm relative min-h-[180px] flex items-center justify-center">
+                            <AnimatePresence mode="wait">
+                                {!qrReady ? (
+                                    <motion.div key="skel" exit={{ opacity: 0 }}
+                                        className="w-40 h-40 rounded-xl bg-gradient-to-br from-gray-100 to-gray-200 animate-pulse"
+                                    />
+                                ) : (
+                                    <motion.div key="qr" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.5 }}>
+                                        <QRCodeSVG value={TICKET.qrData} size={160} bgColor="#ffffff" fgColor="#003087" level="H" />
+                                        <p className="text-center text-[10px] text-gray-400 mt-2 font-mono">{TICKET.id}</p>
+                                    </motion.div>
+                                )}
+                            </AnimatePresence>
                         </div>
                     </div>
 
@@ -125,13 +157,24 @@ export default function BookingConfirmation() {
 
                     {/* Actions */}
                     <div className="flex gap-3">
-                        <button className="flex-1 flex items-center justify-center gap-2 py-3 border border-gray-200 bg-gray-50 text-gray-800 rounded-xl font-bold text-sm hover:bg-gray-100 transition-colors">
-                            <Download size={15} /> Save Ticket
+                        <button
+                            onClick={handleDownload}
+                            className="flex-1 flex items-center justify-center gap-2 py-3 border border-gray-200 bg-gray-50 text-gray-800 rounded-xl font-bold text-sm hover:bg-gray-100 transition-colors"
+                        >
+                            <Printer size={15} /> Download Ticket
                         </button>
                         <Link to="/map" className="flex-1 flex items-center justify-center gap-2 py-3 bg-[#003087] text-white rounded-xl font-bold text-sm hover:bg-blue-900 transition-colors shadow-sm">
                             <MapPin size={15} /> Track Route
                         </Link>
                     </div>
+
+                    {/* Book Another Journey */}
+                    <button
+                        onClick={() => navigate('/')}
+                        className="mt-3 w-full flex items-center justify-center gap-2 py-2.5 border border-[#D7231A] text-[#D7231A] rounded-xl font-bold text-sm hover:bg-red-50 transition-colors"
+                    >
+                        <RotateCcw size={13} /> Book Another Journey
+                    </button>
                 </div>
             </motion.div>
 

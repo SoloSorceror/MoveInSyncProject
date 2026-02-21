@@ -1,198 +1,182 @@
-import { motion } from 'framer-motion'
+import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
+import { motion } from 'framer-motion'
+import { SkeletonCard } from '@/components/Skeleton'
 import {
-    Train, Users, TicketCheck, TrendingUp, AlertCircle,
-    CheckCircle2, Clock, ChevronRight, Map, Activity,
-    ArrowUpRight, ArrowDownRight
+    Users, TicketCheck, Train, Clock, ChevronRight,
+    CheckCircle2, AlertTriangle, Activity
 } from 'lucide-react'
+import {
+    ADMIN_KPI, ADMIN_RECENT_BOOKINGS, ADMIN_LINE_STATUS, ADMIN_QUICK_ACTIONS
+} from '@/data/dummyData'
 
-/* ── Stats ─────────────────────────────────────────────────────── */
-const KPI_CARDS = [
-    { label: 'Total Passengers Today', value: '6,218,430', change: '+4.2%', up: true, icon: Users, color: '#D7231A', bg: '#FEF2F2' },
-    { label: 'Tickets Issued Today', value: '1,284,921', change: '+2.8%', up: true, icon: TicketCheck, color: '#003087', bg: '#EFF6FF' },
-    { label: 'Active Metro Lines', value: '9 / 9', change: '100%', up: true, icon: Train, color: '#00873D', bg: '#F0FDF4' },
-    { label: 'Avg Journey Time', value: '24 min', change: '-1.3 min', up: true, icon: Clock, color: '#7C3AED', bg: '#F5F3FF' },
-]
-
-const RECENT_BOOKINGS = [
-    { id: 'MTS-7834', from: 'Rajiv Chowk', to: 'New Delhi', fare: '₹40', time: '09:45 AM', status: 'Active' },
-    { id: 'MTS-7833', from: 'Hauz Khas', to: 'Botanical Garden', fare: '₹60', time: '09:32 AM', status: 'Active' },
-    { id: 'MTS-7832', from: 'Dwarka Sec 21', to: 'Kashmere Gate', fare: '₹55', time: '09:18 AM', status: 'Completed' },
-    { id: 'MTS-7831', from: 'Airport (T3)', to: 'New Delhi', fare: '₹60', time: '09:10 AM', status: 'Completed' },
-    { id: 'MTS-7830', from: 'Noida Electronic City', to: 'Rajiv Chowk', fare: '₹45', time: '09:01 AM', status: 'Completed' },
-]
-
-const LINE_STATUS = [
-    { line: 'Yellow Line', color: '#D97706', stations: 37, status: 'Operational', freq: '3 min' },
-    { line: 'Blue Line', color: '#2563EB', stations: 50, status: 'Operational', freq: '4 min' },
-    { line: 'Red Line', color: '#D7231A', stations: 29, status: 'Minor Delay', freq: '6 min' },
-    { line: 'Magenta Line', color: '#C026D3', stations: 25, status: 'Operational', freq: '5 min' },
-    { line: 'Orange Line', color: '#EA580C', stations: 6, status: 'Operational', freq: '15 min' },
-]
+/* ── Map iconKey → lucide component ─────────────────────────────── */
+const ICON_MAP = { users: Users, ticket: TicketCheck, train: Train, clock: Clock }
 
 export default function AdminDashboard() {
-    return (
-        <div className="space-y-6 max-w-[1400px] mx-auto">
+    const [isLoading, setIsLoading] = useState(true)
 
-            {/* Page header */}
+    useEffect(() => {
+        const timer = setTimeout(() => setIsLoading(false), 800)
+        return () => clearTimeout(timer)
+    }, [])
+
+    return (
+        <div className="max-w-6xl mx-auto space-y-6">
+
+            {/* Header */}
             <div className="flex items-center justify-between">
                 <div>
                     <h1 className="text-2xl font-black text-[#003087]">Admin Overview</h1>
-                    <p className="text-gray-500 text-sm">MetroSync Network Control — Real-time dashboard</p>
+                    <p className="text-gray-400 text-sm mt-0.5">MoveInSync Network Control — Real-time dashboard</p>
                 </div>
-                <div className="flex items-center gap-2 text-xs font-bold text-[#00873D] bg-green-50 border border-green-200 px-3 py-2 rounded-xl">
-                    <span className="w-2 h-2 rounded-full bg-[#00873D] animate-pulse" />
-                    All Systems Operational
-                </div>
+                <span className="flex items-center gap-1.5 text-xs font-bold text-[#00873D] bg-green-50 border border-green-200 px-3 py-1.5 rounded-full">
+                    <CheckCircle2 size={13} /> All Systems Operational
+                </span>
             </div>
 
             {/* KPI Cards */}
             <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
-                {KPI_CARDS.map(({ label, value, change, up, icon: Icon, color, bg }, i) => (
-                    <motion.div
-                        key={label}
-                        initial={{ opacity: 0, y: 16 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: i * 0.07 }}
-                        className="bg-white rounded-2xl border border-gray-200 p-5 shadow-sm hover:shadow-md transition-shadow"
-                    >
-                        <div className="flex items-start justify-between mb-3">
-                            <div className="w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0" style={{ backgroundColor: bg }}>
-                                <Icon size={20} style={{ color }} />
-                            </div>
-                            <span className={`flex items-center gap-1 text-xs font-bold px-2 py-1 rounded-lg ${up ? 'text-[#00873D] bg-green-50' : 'text-[#D7231A] bg-red-50'}`}>
-                                {up ? <ArrowUpRight size={12} /> : <ArrowDownRight size={12} />}
-                                {change}
-                            </span>
-                        </div>
-                        <p className="text-2xl font-black text-gray-900 mb-0.5">{value}</p>
-                        <p className="text-xs text-gray-500 font-semibold">{label}</p>
-                    </motion.div>
-                ))}
+                {isLoading ? (
+                    Array(4).fill(0).map((_, i) => <SkeletonCard key={i} />)
+                ) : (
+                    ADMIN_KPI.map(({ label, value, change, up, iconKey }, i) => {
+                        const Icon = ICON_MAP[iconKey] || Activity
+                        const colors = [
+                            { icon: '#D7231A', bg: '#FEF2F2' },
+                            { icon: '#003087', bg: '#EFF6FF' },
+                            { icon: '#00873D', bg: '#F0FDF4' },
+                            { icon: '#7C3AED', bg: '#F5F3FF' },
+                        ]
+                        return (
+                            <motion.div
+                                key={label}
+                                initial={{ opacity: 0, y: 12 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ delay: i * 0.05 }}
+                                className="bg-white border border-gray-200 rounded-2xl p-5 shadow-sm"
+                            >
+                                <div className="flex items-start justify-between mb-4">
+                                    <div className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0"
+                                        style={{ backgroundColor: colors[i].bg }}>
+                                        <Icon size={18} style={{ color: colors[i].icon }} />
+                                    </div>
+                                    <span className="text-xs font-bold text-[#00873D] bg-green-50 px-2 py-0.5 rounded-full">
+                                        ↑ {change}
+                                    </span>
+                                </div>
+                                <p className="text-2xl font-black text-gray-900">{value}</p>
+                                <p className="text-xs text-gray-400 font-semibold mt-0.5">{label}</p>
+                            </motion.div>
+                        )
+                    }))}
             </div>
 
-            {/* Main grid */}
-            <div className="grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-5">
+            {/* Recent Bookings + Line Status */}
+            <div className="grid grid-cols-1 xl:grid-cols-[1fr_320px] gap-5">
 
-                {/* Recent Bookings table */}
+                {/* Recent Bookings */}
                 <motion.div
                     initial={{ opacity: 0, y: 16 }}
                     animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.3 }}
-                    className="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden"
+                    transition={{ delay: 0.15 }}
+                    className="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden"
                 >
                     <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100">
                         <div className="flex items-center gap-2">
                             <TicketCheck size={16} className="text-[#D7231A]" />
                             <h2 className="font-black text-gray-800 text-sm">Recent Bookings</h2>
                         </div>
-                        <Link to="/admin/tickets" className="text-xs font-bold text-[#003087] hover:text-[#D7231A] transition-colors flex items-center gap-1">
+                        <span className="text-xs font-bold text-[#003087] hover:underline cursor-pointer flex items-center gap-1">
                             View All <ChevronRight size={12} />
-                        </Link>
+                        </span>
                     </div>
-
-                    <table className="w-full text-sm">
-                        <thead>
-                            <tr className="border-b border-gray-100 bg-gray-50">
-                                <th className="text-left px-5 py-2.5 text-xs font-black text-gray-500 uppercase tracking-wider">Ticket ID</th>
-                                <th className="text-left px-3 py-2.5 text-xs font-black text-gray-500 uppercase tracking-wider">Journey</th>
-                                <th className="text-left px-3 py-2.5 text-xs font-black text-gray-500 uppercase tracking-wider">Time</th>
-                                <th className="text-left px-3 py-2.5 text-xs font-black text-gray-500 uppercase tracking-wider">Fare</th>
-                                <th className="text-left px-3 py-2.5 text-xs font-black text-gray-500 uppercase tracking-wider">Status</th>
-                            </tr>
-                        </thead>
-                        <tbody className="divide-y divide-gray-100">
-                            {RECENT_BOOKINGS.map((b, i) => (
-                                <motion.tr key={b.id}
-                                    initial={{ opacity: 0, x: -8 }}
-                                    animate={{ opacity: 1, x: 0 }}
-                                    transition={{ delay: 0.35 + i * 0.05 }}
-                                    className="hover:bg-gray-50 transition-colors cursor-pointer group"
-                                >
-                                    <td className="px-5 py-3">
-                                        <span className="font-mono font-bold text-xs text-[#003087]">{b.id}</span>
-                                    </td>
-                                    <td className="px-3 py-3">
-                                        <span className="font-semibold text-gray-800">{b.from}</span>
-                                        <span className="text-gray-400 mx-1">→</span>
-                                        <span className="font-semibold text-gray-800">{b.to}</span>
-                                    </td>
-                                    <td className="px-3 py-3 text-gray-500 text-xs font-semibold">{b.time}</td>
-                                    <td className="px-3 py-3 font-black text-[#D7231A]">{b.fare}</td>
-                                    <td className="px-3 py-3">
-                                        <span className={`text-[10px] font-black px-2.5 py-1 rounded-full ${b.status === 'Active'
-                                            ? 'bg-green-50 text-[#00873D] border border-green-200'
-                                            : 'bg-gray-100 text-gray-500 border border-gray-200'
-                                            }`}>
-                                            {b.status === 'Active' && <span className="inline-block w-1.5 h-1.5 rounded-full bg-[#00873D] mr-1 animate-pulse" />}
-                                            {b.status}
-                                        </span>
-                                    </td>
-                                </motion.tr>
-                            ))}
-                        </tbody>
-                    </table>
+                    <div className="overflow-x-auto">
+                        <table className="w-full text-sm">
+                            <thead>
+                                <tr className="bg-gray-50 text-gray-400 text-[11px] font-black uppercase tracking-wider">
+                                    <th className="px-5 py-3 text-left">Ticket ID</th>
+                                    <th className="px-5 py-3 text-left">Journey</th>
+                                    <th className="px-4 py-3 text-left">Time</th>
+                                    <th className="px-4 py-3 text-left">Fare</th>
+                                    <th className="px-4 py-3 text-left">Status</th>
+                                </tr>
+                            </thead>
+                            <tbody className="divide-y divide-gray-100">
+                                {ADMIN_RECENT_BOOKINGS.map(({ id, from, to, fare, time, status }) => (
+                                    <tr key={id} className="hover:bg-gray-50 transition-colors">
+                                        <td className="px-5 py-3 font-mono text-[#003087] text-xs font-bold">{id}</td>
+                                        <td className="px-5 py-3 font-semibold text-gray-800">
+                                            {from} → {to}
+                                        </td>
+                                        <td className="px-4 py-3 text-gray-500 text-xs">{time}</td>
+                                        <td className="px-4 py-3 font-black text-[#D7231A]">{fare}</td>
+                                        <td className="px-4 py-3">
+                                            <span className={`text-[10px] font-black px-2.5 py-1 rounded-full ${status === 'Active'
+                                                ? 'bg-green-50 text-[#00873D] border border-green-200'
+                                                : 'bg-gray-100 text-gray-500 border border-gray-200'
+                                                }`}>
+                                                {status}
+                                            </span>
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
                 </motion.div>
 
-                {/* Right column: Line status */}
-                <div className="space-y-5">
+                {/* Right column: Line Status + Quick Actions */}
+                <div className="space-y-4">
+                    {/* Line Status */}
                     <motion.div
-                        initial={{ opacity: 0, x: 12 }}
+                        initial={{ opacity: 0, x: 16 }}
                         animate={{ opacity: 1, x: 0 }}
-                        transition={{ delay: 0.35 }}
-                        className="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden"
+                        transition={{ delay: 0.2 }}
+                        className="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden"
                     >
-                        <div className="flex items-center gap-2 px-4 py-3 bg-[#003087]">
-                            <Activity size={15} className="text-blue-300" />
-                            <h3 className="font-black text-white text-sm">Line Status</h3>
-                            <span className="ml-auto text-[10px] bg-[#00873D] text-white font-bold px-2 py-0.5 rounded-full">LIVE</span>
+                        <div className="flex items-center justify-between bg-[#003087] px-4 py-3">
+                            <div className="flex items-center gap-2">
+                                <Activity size={14} className="text-blue-300" />
+                                <h3 className="font-black text-white text-sm">Line Status</h3>
+                            </div>
+                            <span className="text-[10px] font-black bg-[#00873D] text-white px-2.5 py-1 rounded-full">LIVE</span>
                         </div>
                         <div className="divide-y divide-gray-100">
-                            {LINE_STATUS.map((l, i) => (
-                                <motion.div key={l.line}
-                                    initial={{ opacity: 0 }}
-                                    animate={{ opacity: 1 }}
-                                    transition={{ delay: 0.4 + i * 0.06 }}
-                                    className="flex items-center gap-3 px-4 py-3 hover:bg-gray-50 transition-colors">
-                                    <span className="w-3 h-3 rounded-full flex-shrink-0" style={{ backgroundColor: l.color }} />
+                            {ADMIN_LINE_STATUS.map(({ line, color, stations, status, freq }) => (
+                                <div key={line} className="flex items-center gap-3 px-4 py-2.5">
+                                    <div className="w-2.5 h-2.5 rounded-full flex-shrink-0" style={{ backgroundColor: color }} />
                                     <div className="flex-1 min-w-0">
-                                        <p className="font-bold text-gray-800 text-sm truncate">{l.line}</p>
-                                        <p className="text-xs text-gray-400">{l.stations} stations · {l.freq}</p>
+                                        <p className="text-sm font-bold text-gray-800">{line}</p>
+                                        <p className="text-[10px] text-gray-400">{stations} stations · {freq}</p>
                                     </div>
-                                    <span className={`text-[10px] font-black px-2 py-1 rounded-full flex-shrink-0 ${l.status === 'Operational'
-                                        ? 'bg-green-50 text-[#00873D]'
-                                        : 'bg-yellow-50 text-amber-600'
+                                    <span className={`text-[10px] font-black px-2 py-0.5 rounded-full flex-shrink-0 ${status === 'Operational'
+                                        ? 'text-[#00873D] bg-green-50'
+                                        : 'text-amber-600 bg-amber-50'
                                         }`}>
-                                        {l.status === 'Operational'
-                                            ? <><CheckCircle2 size={10} className="inline mr-1" />OK</>
-                                            : <><AlertCircle size={10} className="inline mr-1" />Delay</>}
+                                        {status === 'Operational' ? '✓ OK' : '⚠ Delay'}
                                     </span>
-                                </motion.div>
+                                </div>
                             ))}
                         </div>
                     </motion.div>
 
-                    {/* Quick links */}
+                    {/* Quick Actions */}
                     <motion.div
-                        initial={{ opacity: 0, x: 12 }}
+                        initial={{ opacity: 0, x: 16 }}
                         animate={{ opacity: 1, x: 0 }}
-                        transition={{ delay: 0.45 }}
-                        className="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden"
+                        transition={{ delay: 0.25 }}
+                        className="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden"
                     >
                         <div className="px-4 py-3 border-b border-gray-100">
                             <h3 className="font-black text-gray-800 text-sm">Quick Actions</h3>
                         </div>
-                        <div className="p-3 space-y-2">
-                            {[
-                                { label: 'View All Passengers', to: '/admin/users', color: '#D7231A', bg: '#FEF2F2' },
-                                { label: 'Manage Network Lines', to: '/admin/lines', color: '#003087', bg: '#EFF6FF' },
-                                { label: 'Bulk Import Data', to: '/admin/import', color: '#00873D', bg: '#F0FDF4' },
-                                { label: 'View Network Map', to: '/map', color: '#7C3AED', bg: '#F5F3FF' },
-                            ].map(({ label, to, color, bg }) => (
+                        <div className="divide-y divide-gray-100">
+                            {ADMIN_QUICK_ACTIONS.map(({ label, to, color, bg }) => (
                                 <Link key={label} to={to}
-                                    className="flex items-center justify-between px-3 py-2.5 rounded-xl font-bold text-sm transition-all hover:translate-x-1 hover:shadow-sm"
-                                    style={{ backgroundColor: bg, color }}>
-                                    {label} <ChevronRight size={14} />
+                                    className="flex items-center justify-between px-4 py-3 hover:bg-gray-50 transition-colors group">
+                                    <span className="text-sm font-bold transition-colors" style={{ color }}>{label}</span>
+                                    <ChevronRight size={14} className="text-gray-300 group-hover:text-gray-500 transition-colors" />
                                 </Link>
                             ))}
                         </div>

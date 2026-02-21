@@ -1,26 +1,16 @@
 import { useState } from 'react'
 import { NavLink, Link, useNavigate, Outlet } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
-import {
-    Train, LayoutDashboard, Users, Map, Settings,
-    Bell, LogOut, ChevronRight, TrendingUp, Ticket,
-    Menu, X, ShieldCheck, BarChart3
-} from 'lucide-react'
+import { Train, LayoutDashboard, Map, Settings, Grid3x3, ChevronRight, Menu, X, ShieldCheck } from 'lucide-react'
 import { useAuthStore } from '@/store/authStore'
+import { ADMIN_TOP_BAR_STATS } from '@/data/dummyData'
 
+/* ── Only the routes that actually exist + are useful ─────────── */
 const NAV_ITEMS = [
     { to: '/admin', label: 'Overview', icon: LayoutDashboard, end: true },
-    { to: '/admin/users', label: 'Passengers', icon: Users, end: false },
-    { to: '/admin/tickets', label: 'Tickets', icon: Ticket, end: false },
     { to: '/admin/lines', label: 'Network Lines', icon: Map, end: false },
-    { to: '/admin/analytics', label: 'Analytics', icon: BarChart3, end: false },
     { to: '/admin/import', label: 'Bulk Import', icon: Settings, end: false },
-]
-
-const QUICK_STATS = [
-    { label: 'Active Tickets', value: '1,284', color: '#D7231A', bg: '#FEF2F2' },
-    { label: 'Passengers Today', value: '6.2M', color: '#003087', bg: '#EFF6FF' },
-    { label: 'Lines Running', value: '9/9', color: '#00873D', bg: '#F0FDF4' },
+    { to: '/admin/matrix', label: 'Compat Matrix', icon: Grid3x3, end: false },
 ]
 
 /* ── Indian Flag SVG ───────────────────────────────────────────── */
@@ -48,21 +38,19 @@ function IndianFlag({ size = 24 }) {
 }
 
 export default function AdminLayout() {
-    const { user, logout } = useAuthStore()
+    const { user } = useAuthStore()
     const navigate = useNavigate()
     const [mobileOpen, setMobileOpen] = useState(false)
 
-    const handleLogout = () => { logout(); navigate('/login') }
-
     return (
-        <div className="flex min-h-screen bg-gray-50">
+        <div className="flex h-screen bg-gray-50 overflow-hidden">
 
-            {/* ── Sidebar ──────────────────────────────────────────── */}
+            {/* ── Sidebar (full height, no scroll cut-off) ─────────── */}
             <aside className={`
-                fixed top-0 left-0 z-40 h-full w-64 bg-[#003087] flex flex-col shadow-xl
-                transform transition-transform duration-300 ease-in-out
+                fixed inset-y-0 left-0 z-40 w-64 bg-[#003087] flex flex-col
+                transform transition-transform duration-300 ease-in-out shadow-xl
                 ${mobileOpen ? 'translate-x-0' : '-translate-x-full'}
-                lg:translate-x-0 lg:static lg:z-auto
+                lg:translate-x-0 lg:static lg:z-auto lg:flex-shrink-0
             `}>
                 {/* Tricolor strip */}
                 <div className="flex h-1.5 flex-shrink-0">
@@ -82,12 +70,12 @@ export default function AdminLayout() {
                             <p className="text-blue-200 text-[10px] font-bold tracking-wider">ADMIN PORTAL</p>
                         </div>
                     </div>
-                    {/* Indian Flag row */}
+                    {/* Indian Flag + Brand */}
                     <div className="flex items-center gap-3 bg-white/10 rounded-xl px-3 py-2.5 border border-white/10">
                         <IndianFlag size={22} />
                         <div>
-                            <p className="text-white font-black text-xs">भारत / India</p>
-                            <p className="text-blue-200 text-[10px] font-semibold">DMRC Metro Network</p>
+                            <p className="text-white font-black text-xs">MoveInSync</p>
+                            <p className="text-blue-200 text-[10px] font-semibold">Smart Metro Network</p>
                         </div>
                     </div>
                 </div>
@@ -106,11 +94,12 @@ export default function AdminLayout() {
                     </div>
                 </div>
 
-                {/* Nav */}
+                {/* Nav — fills remaining space */}
                 <nav className="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
                     <p className="text-blue-300/60 text-[10px] font-black uppercase tracking-widest px-3 mb-3">Navigation</p>
                     {NAV_ITEMS.map(({ to, label, icon: Icon, end }) => (
                         <NavLink key={to} to={to} end={end}
+                            onClick={() => setMobileOpen(false)}
                             className={({ isActive }) =>
                                 `flex items-center gap-3 px-3 py-2.5 rounded-xl font-semibold text-sm transition-all ${isActive
                                     ? 'bg-[#D7231A] text-white shadow-md'
@@ -128,16 +117,14 @@ export default function AdminLayout() {
                     ))}
                 </nav>
 
-                {/* Bottom actions */}
-                <div className="px-3 pb-5 space-y-1 flex-shrink-0 border-t border-white/10 pt-4">
-                    <Link to="/"
-                        className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-blue-100 hover:bg-white/10 font-semibold text-sm transition-all">
-                        <Bell size={17} className="text-blue-300" /> Passenger View
-                    </Link>
-                    <button onClick={handleLogout}
-                        className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-blue-100 hover:bg-red-500/20 hover:text-white font-semibold text-sm transition-all">
-                        <LogOut size={17} className="text-red-400" /> Sign Out
-                    </button>
+                {/* Bottom padding so sidebar extends full height visually */}
+                <div className="flex-shrink-0 pb-6 px-4">
+                    <div className="border-t border-white/10 pt-4">
+                        <Link to="/"
+                            className="flex items-center gap-2 text-blue-200 hover:text-white text-xs font-semibold transition-colors">
+                            ← Back to Passenger View
+                        </Link>
+                    </div>
                 </div>
             </aside>
 
@@ -152,22 +139,22 @@ export default function AdminLayout() {
             </AnimatePresence>
 
             {/* ── Main content ─────────────────────────────────────── */}
-            <div className="flex-1 flex flex-col min-h-screen overflow-x-hidden">
+            <div className="flex-1 flex flex-col h-screen overflow-hidden">
 
                 {/* Top bar */}
-                <header className="bg-white border-b border-gray-200 px-4 sm:px-6 h-14 flex items-center gap-4 sticky top-0 z-20 shadow-sm">
+                <header className="bg-white border-b border-gray-200 px-4 sm:px-6 h-14 flex items-center gap-4 flex-shrink-0 shadow-sm">
                     <button onClick={() => setMobileOpen(v => !v)} className="lg:hidden p-2 rounded-lg hover:bg-gray-100 transition-colors">
                         {mobileOpen ? <X size={20} className="text-[#003087]" /> : <Menu size={20} className="text-[#003087]" />}
                     </button>
                     <div className="flex items-center gap-2 text-sm font-semibold text-gray-500">
                         <span className="text-[#003087] font-black">Admin</span>
                         <ChevronRight size={14} />
-                        <span className="text-gray-700">MetroSync Control Panel</span>
+                        <span className="text-gray-700">MoveInSync Control Panel</span>
                     </div>
                     <div className="ml-auto hidden md:flex items-center gap-2">
-                        {QUICK_STATS.map(({ label, value, color, bg }) => (
-                            <div key={label} className="flex items-center gap-2 px-3 py-1.5 rounded-lg border border-gray-200" style={{ backgroundColor: bg }}>
-                                <span className="font-black text-sm" style={{ color }}>{value}</span>
+                        {ADMIN_TOP_BAR_STATS.map(({ label, value, colorHex, bgHex }) => (
+                            <div key={label} className="flex items-center gap-2 px-3 py-1.5 rounded-lg border border-gray-200" style={{ backgroundColor: bgHex }}>
+                                <span className="font-black text-sm" style={{ color: colorHex }}>{value}</span>
                                 <span className="text-xs text-gray-500">{label}</span>
                             </div>
                         ))}
@@ -181,8 +168,8 @@ export default function AdminLayout() {
                     <div className="flex-1 bg-[#00873D]" />
                 </div>
 
-                {/* ✅ This is the KEY fix: Outlet renders nested admin routes */}
-                <main className="flex-1 p-4 sm:p-6 overflow-y-auto">
+                {/* ✅ Outlet — renders nested admin route pages, scrollable */}
+                <main className="flex-1 overflow-y-auto p-4 sm:p-6">
                     <Outlet />
                 </main>
             </div>

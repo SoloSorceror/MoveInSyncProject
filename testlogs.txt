@@ -1,0 +1,529 @@
+
+[1m[46m RUN [49m[22m [36mv4.0.18 [39m[90mE:/MoveInSyncProject[39m
+
+ [32m✓[39m src/__tests__/routeEngine.test.js [2m([22m[2m4 tests[22m[2m)[22m[32m 21[2mms[22m[39m
+ [31m❯[39m src/__tests__/AdminLines.test.jsx [2m([22m[2m1 test[22m[2m | [22m[31m1 failed[39m[2m)[22m[33m 354[2mms[22m[39m
+[31m     [31m×[31m renders line buttons and input for new station[39m[33m 349[2mms[22m[39m
+ [32m✓[39m src/__tests__/RouteTimeline.test.jsx [2m([22m[2m2 tests[22m[2m)[22m[32m 191[2mms[22m[39m
+ [31m❯[39m src/__tests__/BookingConfirmation.test.jsx [2m([22m[2m1 test[22m[2m | [22m[31m1 failed[39m[2m)[22m[32m 235[2mms[22m[39m
+[31m     [31m×[31m renders the booking confirmation mock data[39m[32m 231[2mms[22m[39m
+ [31m❯[39m src/__tests__/Home.test.jsx [2m([22m[2m1 test[22m[2m | [22m[31m1 failed[39m[2m)[22m[33m 313[2mms[22m[39m
+[31m     [31m×[31m renders search form and stats[39m[33m 307[2mms[22m[39m
+
+[31m⎯⎯⎯⎯⎯⎯⎯[39m[1m[41m Failed Tests 3 [49m[22m[31m⎯⎯⎯⎯⎯⎯⎯[39m
+
+[41m[1m FAIL [22m[49m src/__tests__/AdminLines.test.jsx[2m > [22mAdminLines Page[2m > [22mrenders line buttons and input for new station
+[31m[1mTestingLibraryElementError[22m[39m: Unable to find an element with the placeholder text of: Station Name
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<div[39m
+      [33mclass[39m=[32m"max-w-5xl mx-auto space-y-6"[39m
+    [36m>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"flex flex-col sm:flex-row sm:items-end justify-between gap-4"[39m
+      [36m>[39m
+        [36m<div>[39m
+          [36m<h1[39m
+            [33mclass[39m=[32m"text-2xl font-black text-[#003087] mb-1"[39m
+          [36m>[39m
+            [0mRoute Management[0m
+          [36m</h1>[39m
+          [36m<p[39m
+            [33mclass[39m=[32m"text-gray-500 text-sm"[39m
+          [36m>[39m
+            [0mDrag & drop to reorder stations. Add or remove stops. Interchanges are auto-detected.[0m
+          [36m</p>[39m
+        [36m</div>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"flex items-center gap-2 px-6 py-2.5 bg-[#003087] hover:bg-blue-900 text-white rounded-xl font-bold transition-all disabled:opacity-50 shadow-md"[39m
+        [36m>[39m
+          [36m<svg[39m
+            [33maria-hidden[39m=[32m"true"[39m
+            [33mclass[39m=[32m"lucide lucide-save"[39m
+            [33mfill[39m=[32m"none"[39m
+            [33mheight[39m=[32m"18"[39m
+            [33mstroke[39m=[32m"currentColor"[39m
+            [33mstroke-linecap[39m=[32m"round"[39m
+            [33mstroke-linejoin[39m=[32m"round"[39m
+            [33mstroke-width[39m=[32m"2"[39m
+            [33mviewBox[39m=[32m"0 0 24 24"[39m
+            [33mwidth[39m=[32m"18"[39m
+            [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+          [36m>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M15.2 3a2 2 0 0 1 1.4.6l3.8 3.8a2 2 0 0 1 .6 1.4V19a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M17 21v-7a1 1 0 0 0-1-1H8a1 1 0 0 0-1 1v7"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M7 3v4a1 1 0 0 0 1 1h7"[39m
+            [36m/>[39m
+          [36m</svg>[39m
+          [0mSave Routes[0m
+        [36m</button>[39m
+      [36m</div>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"flex flex-col md:flex-row gap-8 items-start"[39m
+      [36m>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"w-full md:w-56 flex-shrink-0 flex flex-col gap-1.5"[39m
+        [36m>[39m
+          [36m<p[39m
+            [33mclass[39m=[32m"text-[11px] font-black text-gray-400 uppercase tracking-widest mb-2 px-2"[39m
+          [36m>[39m
+            [0mNetwork Lines[0m
+          [36m</p>[39m
+          [36m<button[39m
+            [33mclass[39m=[32m"flex justify-between items-center px-4 py-3 rounded-xl font-semibold text-sm transition-all bg-[#003087] text-white shadow-sm"[39m
+          [36m>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"flex items-center gap-3"[39m
+            [36m>[39m
+              [36m<span[39m
+                [33mclass[39m=[32m"w-3 h-3 rounded-full bg-yellow-400"[39m
+              [36m/>[39m
+              [0mYellow Line[0m
+            [36m</div>[39m
+            [36m<span[39m
+              [33mclass[39m=[32m"text-xs px-2 py-0.5 rounded-md font-bold bg-white/20 text-white"[39m
+            [36m>[39m
+              [0m7[0m
+            [36m</span>[39m
+          [36m</button>[39m
+          [36m<button[39m
+            [33mclass[39m=[32m"flex justify-between items-center px-4 py-3 rounded-xl font-semibold text-sm transition-all text-gray-600 hover:bg-gray-100 bg-gray-50 border border-gray-200"[39m
+          [36m>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"flex items-center gap-3"[39m
+            [36m>[39m
+              [36m<span[39m
+                [33mclass[39m=[32m"w-3 h-3 rounded-full bg-blue-500"[39m
+              [36m/>[39m
+              [0mBlue Line[0m
+            [36m</div>[39m
+            [36m<span[39m
+              [33mclass[39m=[32m"text-xs px-2 py-0.5 rounded-md font-bold bg-gray-200 text-gray-600"[39m
+            [36m>[39m
+              [0m6[0m
+            [36m</span>[39m
+          [36m</button>[39m
+          [36m<button[39m
+            [33mclass[39m=[32m"flex justify-between items-center px-4 py-3 rounded-xl font-semibold text-sm transition-all text-gray-600 hover:bg-gray-100 bg-gray-50 border border-gray-200"[39m
+          [36m>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"flex items-center gap-3"[39m
+            [36m>[39m
+              [36m<span[39m
+                [33mclass[39m=[32m"w-3 h-3 rounded-full bg-red-500"[39m
+              [36m/>[39m
+              [0mRed Line[0m
+            [36m</div>[39m
+            [36m<span[39m
+              [33mclass[39m=[32m"text-xs px-2 py-0.5 rounded-md font-bold bg-gray-200 text-gray-600"[39m
+            [36m>[39m
+              [0m6[0m
+            [36m</span>[39m
+          [36m</button>[39m
+        [36m</div>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"flex-1 w-full bg-white border border-gray-200 rounded-2xl p-6 shadow-sm min-h-[600px] flex flex-col"[39m
+        [36m>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"flex flex-col xl:flex-row xl:items-center justify-between gap-4 mb-6 pb-6 border-b border-gray-100"[39m
+          [36m>[39m
+            [36m<div>[39m
+              [36m<h2[39m
+                [33mclass[39m=[32m"text-lg font-black text-gray-800 flex items-center gap-2"[39m
+              [36m>[39m
+                [36m<span[39m
+                  [33mclass[39m=[32m"w-4 h-4 rounded-full bg-yellow-400"[39m
+                [36m/>[39m
+                [0mYellow Line[0m
+                [0m Sequence[0m
+              [36m</h2>[39m
+            [36m</div>[39m
+            [36m<form[39m
+              [33mclass[39m=[32m"flex relative items-center w-full xl:w-72"[39m
+            [36m>[39m
+              [36m<input[39m
+                [33mclass[39m=[32m"pl-4 pr-12 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:border-[#003087] focus:ring-2 focus:ring-[#003087]/20 w-full text-gray-800 transition-all"[39m
+                [33mplaceholder[39m=[32m"Add new station..."[39m
+                [33mtype[39m=[32m"text"[39m
+                [33mvalue[39m=[32m""[39m
+              [36m/>[39m
+              [36m<button[39m
+                [33mclass[39m=[32m"absolute right-1 top-1 bottom-1 px-2.5 bg-blue-50 text-[#003087] rounded-lg hover:bg-blue-100 transition-colors disabled:opacity-50"[39m
+                [33mdisabled[39m=[32m""[39m
+                [33mtype[39m=[32m"submit"[39m
+              [36m>[39m
+                [36m<svg[39m
+                  [33maria-hidden[39m=[32m"true"[39m
+                  [33mclass[39m=[32m"lucide lucide-plus"[39m
+                  [33mfill[39m=[32m"none"[39m
+                  [33mheight[39m=[32m"18"[39m
+   ...
+[90m [2m❯[22m Object.getElementError node_modules/@testing-library/dom/dist/config.js:[2m37:19[22m[39m
+[90m [2m❯[22m node_modules/@testing-library/dom/dist/query-helpers.js:[2m76:38[22m[39m
+[90m [2m❯[22m node_modules/@testing-library/dom/dist/query-helpers.js:[2m52:17[22m[39m
+[90m [2m❯[22m node_modules/@testing-library/dom/dist/query-helpers.js:[2m95:19[22m[39m
+[36m [2m❯[22m src/__tests__/AdminLines.test.jsx:[2m14:23[22m[39m
+    [90m 12| [39m        [34mexpect[39m(screen[33m.[39m[34mgetByText[39m([32m'Red Line'[39m))[33m.[39m[34mtoBeInTheDocument[39m()
+    [90m 13| [39m
+    [90m 14| [39m        expect(screen.getByPlaceholderText('Station Name')).toBeInTheD…
+    [90m   | [39m                      [31m^[39m
+    [90m 15| [39m    })
+    [90m 16| [39m})
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/3]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m src/__tests__/BookingConfirmation.test.jsx[2m > [22mBookingConfirmation Page[2m > [22mrenders the booking confirmation mock data
+[31m[1mTestingLibraryElementError[22m[39m: Unable to find an element with the text: A. This could be because the text is broken up by multiple elements. In this case, you can provide a function for your text matcher to make your matcher more flexible.
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<div[39m
+      [33mclass[39m=[32m"min-h-[90vh] bg-gray-50 flex flex-col items-center justify-center py-12 px-4"[39m
+    [36m>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"text-center mb-6"[39m
+        [33mstyle[39m=[32m"opacity: 0; transform: translateY(-16px);"[39m
+      [36m>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"w-20 h-20 bg-[#00873D] rounded-full flex items-center justify-center mx-auto shadow-xl shadow-green-400/30 mb-4"[39m
+          [33mstyle[39m=[32m"transform: scale(0);"[39m
+        [36m>[39m
+          [36m<svg[39m
+            [33maria-hidden[39m=[32m"true"[39m
+            [33mclass[39m=[32m"lucide lucide-circle-check text-white"[39m
+            [33mfill[39m=[32m"none"[39m
+            [33mheight[39m=[32m"40"[39m
+            [33mstroke[39m=[32m"currentColor"[39m
+            [33mstroke-linecap[39m=[32m"round"[39m
+            [33mstroke-linejoin[39m=[32m"round"[39m
+            [33mstroke-width[39m=[32m"2"[39m
+            [33mviewBox[39m=[32m"0 0 24 24"[39m
+            [33mwidth[39m=[32m"40"[39m
+            [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+          [36m>[39m
+            [36m<circle[39m
+              [33mcx[39m=[32m"12"[39m
+              [33mcy[39m=[32m"12"[39m
+              [33mr[39m=[32m"10"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"m9 12 2 2 4-4"[39m
+            [36m/>[39m
+          [36m</svg>[39m
+        [36m</div>[39m
+        [36m<h1[39m
+          [33mclass[39m=[32m"text-2xl font-black text-[#003087] mb-1"[39m
+        [36m>[39m
+          [0mBooking Confirmed![0m
+        [36m</h1>[39m
+        [36m<p[39m
+          [33mclass[39m=[32m"text-gray-500 text-sm font-medium"[39m
+        [36m>[39m
+          [0mYour digital ticket is ready to use[0m
+        [36m</p>[39m
+      [36m</div>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"w-full max-w-md bg-white rounded-3xl shadow-xl border border-gray-200 overflow-hidden"[39m
+        [33mstyle[39m=[32m"opacity: 0; transform: scale(0.95);"[39m
+      [36m>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"h-1 flex"[39m
+        [36m>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"flex-1 bg-[#D7231A]"[39m
+          [36m/>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"flex-1 bg-white border-y border-gray-200"[39m
+          [36m/>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"flex-1 bg-[#00873D]"[39m
+          [36m/>[39m
+        [36m</div>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"bg-[#003087] px-6 pt-5 pb-10 relative overflow-hidden"[39m
+        [36m>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"absolute -right-12 -top-12 w-40 h-40 rounded-full bg-white/5"[39m
+          [36m/>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"flex items-center justify-between mb-5"[39m
+          [36m>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"flex items-center gap-2"[39m
+            [36m>[39m
+              [36m<svg[39m
+                [33maria-hidden[39m=[32m"true"[39m
+                [33mclass[39m=[32m"lucide lucide-ticket-check text-blue-300"[39m
+                [33mfill[39m=[32m"none"[39m
+                [33mheight[39m=[32m"15"[39m
+                [33mstroke[39m=[32m"currentColor"[39m
+                [33mstroke-linecap[39m=[32m"round"[39m
+                [33mstroke-linejoin[39m=[32m"round"[39m
+                [33mstroke-width[39m=[32m"2"[39m
+                [33mviewBox[39m=[32m"0 0 24 24"[39m
+                [33mwidth[39m=[32m"15"[39m
+                [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+              [36m>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z"[39m
+                [36m/>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"m9 12 2 2 4-4"[39m
+                [36m/>[39m
+              [36m</svg>[39m
+              [36m<span[39m
+                [33mclass[39m=[32m"text-blue-200 font-bold text-xs tracking-wider uppercase"[39m
+              [36m>[39m
+                [0mDigital Ticket[0m
+              [36m</span>[39m
+            [36m</div>[39m
+            [36m<span[39m
+              [33mclass[39m=[32m"bg-[#00873D] text-white text-[10px] font-black px-2.5 py-1 rounded-full"[39m
+            [36m>[39m
+              [0m● [0m
+              [0mConfirmed[0m
+            [36m</span>[39m
+          [36m</div>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"flex items-center gap-3"[39m
+          [36m>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"flex-1"[39m
+            [36m>[39m
+              [36m<p[39m
+                [33mclass[39m=[32m"text-[10px] text-blue-200 font-bold uppercase tracking-widest mb-0.5"[39m
+              [36m>[39m
+                [0mFrom[0m
+              [36m</p>[39m
+              [36m<p[39m
+                [33mclass[39m=[32m"text-2xl font-black text-white"[39m
+              [36m>[39m
+                [0mRajiv Chowk[0m
+              [36m</p>[39m
+            [36m</div>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"w-9 h-9 rounded-full bg-[#D7231A] flex items-center justify-center flex-shrink-0"[39m
+            [36m>[39m
+              [36m<svg[39m
+                [33maria-hidden[39m=[32m"true"[39m
+                [33mclass[39m=[32m"lucide lucide-arrow-right text-white"[39m
+                [33mfill[39m=[32m"none"[39m
+                [33mheight[39m=[32m"16"[39m
+                [33mstroke[39m=[32m"currentColor"[39m
+                [33mstroke-linecap[39m=[32m"round"[39m
+                [33mstroke-linejoin[39m=[32m"round"[39m
+                [33mstroke-width[39m=[32m"2"[39m
+                [33mviewBox[39m=[32m"0 0 24 24"[39m
+                [33mwidth[39m=[32m"16"[39m
+                [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+              [36m>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M5 12h14"[39m
+                [36m/>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"m12 5 7 7-7 7"[39m
+                [36m/>[39m
+              [36m</svg>[39m
+            [36m</div>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"flex-1 text-right"[39m
+            [36m>[39m
+              [36m<p[39m
+                [33mclass[39m=[32m"text-[10px] text-blue-200 font-bold uppercase tracking-widest mb-0.5"[39m
+              [36m>[39m
+                [0mTo[0m
+              [36m</p>[39m
+              [36m<p[39m
+                [33mclass[39m=[32m"text-2xl fon...
+[90m [2m❯[22m Object.getElementError node_modules/@testing-library/dom/dist/config.js:[2m37:19[22m[39m
+[90m [2m❯[22m node_modules/@testing-library/dom/dist/query-helpers.js:[2m76:38[22m[39m
+[90m [2m❯[22m node_modules/@testing-library/dom/dist/query-helpers.js:[2m52:17[22m[39m
+[90m [2m❯[22m node_modules/@testing-library/dom/dist/query-helpers.js:[2m95:19[22m[39m
+[36m [2m❯[22m src/__tests__/BookingConfirmation.test.jsx:[2m34:23[22m[39m
+    [90m 32| [39m        expect(screen.getByText('Booking Confirmed!')).toBeInTheDocume…
+    [90m 33| [39m        [34mexpect[39m(screen[33m.[39m[34mgetByText[39m([32m'Download Ticket'[39m))[33m.[39m[34mtoBeInTheDocument[39m()
+    [90m 34| [39m        [34mexpect[39m(screen[33m.[39m[34mgetByText[39m([32m'A'[39m))[33m.[39m[34mtoBeInTheDocument[39m()
+    [90m   | [39m                      [31m^[39m
+    [90m 35| [39m        [34mexpect[39m(screen[33m.[39m[34mgetByText[39m([32m'B'[39m))[33m.[39m[34mtoBeInTheDocument[39m()
+    [90m 36| [39m    })
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/3]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m src/__tests__/Home.test.jsx[2m > [22mHome Page[2m > [22mrenders search form and stats
+[31m[1mTestingLibraryElementError[22m[39m: Unable to find an element with the text: Where would you like to go?. This could be because the text is broken up by multiple elements. In this case, you can provide a function for your text matcher to make your matcher more flexible.
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<div[39m
+      [33mclass[39m=[32m"min-h-[90vh] bg-gray-50"[39m
+    [36m>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"flex h-1"[39m
+      [36m>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"flex-1 bg-[#D7231A]"[39m
+        [36m/>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"flex-1 bg-white border-y border-gray-200"[39m
+        [36m/>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"flex-1 bg-[#00873D]"[39m
+        [36m/>[39m
+      [36m</div>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"relative w-full h-[200px] md:h-[240px] overflow-hidden"[39m
+      [36m>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"absolute inset-0 bg-cover bg-center"[39m
+          [33mstyle[39m=[32m"background-image: url(\"/src/assets/metroImage.jpg\");"[39m
+        [36m/>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"absolute inset-0 bg-gradient-to-r from-[#003087]/90 via-[#003087]/70 to-[#D7231A]/60"[39m
+        [36m/>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"relative z-10 h-full flex flex-col items-center justify-center text-center px-4"[39m
+          [33mstyle[39m=[32m"opacity: 0; transform: translateY(-16px);"[39m
+        [36m>[39m
+          [36m<span[39m
+            [33mclass[39m=[32m"text-xs font-bold tracking-[0.2em] text-blue-200 uppercase mb-3"[39m
+          [36m>[39m
+            [0m🇮🇳 India's Smart Metro Network[0m
+          [36m</span>[39m
+          [36m<h1[39m
+            [33mclass[39m=[32m"text-3xl md:text-5xl font-black text-white tracking-tight leading-tight"[39m
+          [36m>[39m
+            [0mPlan Your Journey.[0m
+            [0m [0m
+            [36m<span[39m
+              [33mclass[39m=[32m"text-yellow-300"[39m
+            [36m>[39m
+              [0mTravel Smart.[0m
+            [36m</span>[39m
+          [36m</h1>[39m
+          [36m<p[39m
+            [33mclass[39m=[32m"text-blue-100 font-medium mt-2 text-sm md:text-base max-w-lg"[39m
+          [36m>[39m
+            [0mBook tickets, explore the network, track live status — all in one place.[0m
+          [36m</p>[39m
+        [36m</div>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"absolute bottom-0 left-0 w-full h-20 bg-gradient-to-t from-gray-50 to-transparent"[39m
+        [36m/>[39m
+      [36m</div>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 -mt-10 pb-12 relative z-10"[39m
+      [36m>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"grid grid-cols-1 lg:grid-cols-[340px_1fr_300px] gap-5"[39m
+        [36m>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"bg-white rounded-2xl border border-gray-200 shadow-sm overflow-visible"[39m
+            [33mstyle[39m=[32m"opacity: 0; transform: translateY(20px);"[39m
+          [36m>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"flex items-center gap-3 px-5 py-4 bg-[#003087] rounded-t-2xl"[39m
+            [36m>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"w-8 h-8 rounded-full bg-[#D7231A] flex items-center justify-center flex-shrink-0"[39m
+              [36m>[39m
+                [36m<svg[39m
+                  [33maria-hidden[39m=[32m"true"[39m
+                  [33mclass[39m=[32m"lucide lucide-navigation text-white"[39m
+                  [33mfill[39m=[32m"none"[39m
+                  [33mheight[39m=[32m"16"[39m
+                  [33mstroke[39m=[32m"currentColor"[39m
+                  [33mstroke-linecap[39m=[32m"round"[39m
+                  [33mstroke-linejoin[39m=[32m"round"[39m
+                  [33mstroke-width[39m=[32m"2"[39m
+                  [33mviewBox[39m=[32m"0 0 24 24"[39m
+                  [33mwidth[39m=[32m"16"[39m
+                  [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+                [36m>[39m
+                  [36m<polygon[39m
+                    [33mpoints[39m=[32m"3 11 22 2 13 21 11 13 3 11"[39m
+                  [36m/>[39m
+                [36m</svg>[39m
+              [36m</div>[39m
+              [36m<div>[39m
+                [36m<h2[39m
+                  [33mclass[39m=[32m"font-black text-white text-base"[39m
+                [36m>[39m
+                  [0mPlan Your Journey[0m
+                [36m</h2>[39m
+                [36m<p[39m
+                  [33mclass[39m=[32m"text-blue-200 text-xs"[39m
+                [36m>[39m
+                  [0mClick to select stations[0m
+                [36m</p>[39m
+              [36m</div>[39m
+            [36m</div>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"p-5 space-y-4"[39m
+            [36m>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"flex gap-2"[39m
+              [36m>[39m
+                [36m<button[39m
+                  [33mclass[39m=[32m"flex-1 py-2 rounded-lg text-xs font-bold transition-all border bg-[#003087] text-white border-[#003087]"[39m
+                [36m>[39m
+                  [0mShortest Route[0m
+                [36m</button>[39m
+                [36m<button[39m
+                  [33mclass[39m=[32m"flex-1 py-2 rounded-lg text-xs font-bold transition-all border bg-white text-gray-600 border-gray-200 hover:border-[#003087]"[39m
+                [36m>[39m
+                  [0mMin Interchange[0m
+                [36m</button>[39m
+              [36m</div>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"relative"[39m
+              [36m>[39m
+                [36m<label[39m
+                  [33mclass[39m=[32m"block text-xs font-bold text-[#D7231A] uppercase tracking-wider mb-1"[39m
+                [36m>[39m
+                  [0mFrom[0m
+                [36m</label>[39m
+                [36m<div[39m
+                  [33mclass[39m=[32m"relative cursor-pointer"[39m
+                [36m>[39m
+                  [36m<input[39m
+                    [33mclass[39m=[32m"w-full px-3 py-2.5 border border-gray-200 rounded-xl text-sm text-gray-800 bg-gray-50 cursor-pointer focus:outline-none focus:border-[#003087] focus:ring-1 focus:ring-[#003087]/20 transition-all"[39m
+                    [33mplaceholder[39m=[32m"Type station name or select"[39m
+                    [33mreadonly[39m=[32m""[39m
+                    [33mvalue[39m=[32m"Rajiv Chowk"[39m
+                  [36m/>[39m
+                  [36m<svg[39m
+                    [33maria-hidden[39m=[32m"true"[39m
+                    [33mclass[39m=[32m"lucide lucide-map-pin absolute right-3 top-1/2 -translate-y-1/2 text-gray-400"[39m
+                    [33mfill[39m=[32m"none"[39m
+                    [33mheight[39m=[32m"14"[39m
+                    [33mstroke[39m=[32m"currentColor"[39m
+                    [33mstroke-linecap[39m=[32m"round"...
+[90m [2m❯[22m Object.getElementError node_modules/@testing-library/dom/dist/config.js:[2m37:19[22m[39m
+[90m [2m❯[22m node_modules/@testing-library/dom/dist/query-helpers.js:[2m76:38[22m[39m
+[90m [2m❯[22m node_modules/@testing-library/dom/dist/query-helpers.js:[2m52:17[22m[39m
+[90m [2m❯[22m node_modules/@testing-library/dom/dist/query-helpers.js:[2m95:19[22m[39m
+[36m [2m❯[22m src/__tests__/Home.test.jsx:[2m42:23[22m[39m
+    [90m 40| [39m        )
+    [90m 41| [39m
+    [90m 42| [39m        expect(screen.getByText('Where would you like to go?')).toBeIn…
+    [90m   | [39m                      [31m^[39m
+    [90m 43| [39m        expect(screen.getByText(/Show Route & Fare/i)).toBeInTheDocume…
+    [90m 44| [39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/3]⎯[22m[39m
+
+
+[2m Test Files [22m [1m[31m3 failed[39m[22m[2m | [22m[1m[32m2 passed[39m[22m[90m (5)[39m
+[2m      Tests [22m [1m[31m3 failed[39m[22m[2m | [22m[1m[32m6 passed[39m[22m[90m (9)[39m
+[2m   Start at [22m 21:14:05
+[2m   Duration [22m 4.94s[2m (transform 983ms, setup 1.59s, import 5.45s, tests 1.11s, environment 11.30s)[22m
+

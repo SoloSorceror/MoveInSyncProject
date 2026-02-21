@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import React, { useState, useMemo } from 'react';
 import {
     DndContext,
     closestCenter,
@@ -24,7 +24,7 @@ const INITIAL_NETWORK = [
     { id: 'red', name: 'Red Line', color: 'bg-red-500', stations: ['Rithala', 'Netaji Subhash Place', 'Kashmere Gate', 'Welcome', 'Dilshad Garden', 'Shaheed Sthal'] },
 ];
 
-function SortableStationItem({ id, stationName, onRemove, isInterchange }) {
+const SortableStationItem = React.memo(function SortableStationItem({ id, stationName, onRemove, isInterchange }) {
     const {
         attributes,
         listeners,
@@ -78,7 +78,7 @@ function SortableStationItem({ id, stationName, onRemove, isInterchange }) {
             </div>
         </div>
     );
-}
+});
 
 export default function AdminLines() {
     const [network, setNetwork] = useState(INITIAL_NETWORK);
