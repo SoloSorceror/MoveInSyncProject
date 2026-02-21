@@ -1,5 +1,5 @@
 import { useEffect } from 'react'
-import { Outlet } from 'react-router-dom'
+import AnimatedOutlet from '@/components/AnimatedOutlet'
 import Navbar from '@/components/Navbar'
 import { useUIStore } from '@/store/uiStore'
 
@@ -24,7 +24,7 @@ export default function MainLayout() {
 
             <Navbar />
             <main className="flex-1 w-full pt-16 pb-20 md:pb-8">
-                <Outlet />
+                <AnimatedOutlet />
             </main>
         </div>
     )
