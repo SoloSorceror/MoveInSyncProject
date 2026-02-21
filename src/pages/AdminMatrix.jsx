@@ -1,12 +1,12 @@
 import { useState } from 'react'
 import { motion } from 'framer-motion'
-import { COMPATIBILITY_MATRIX, COMPATIBILITY_VERSIONS } from '@/data/dummyData'
+import { TRAIN_COMPATIBILITY_MATRIX, TRAIN_FLEETS, MATRIX_LINES } from '@/data/dummyData'
 import { Info } from 'lucide-react'
 
 const CELL_STYLES = {
-    ok: { bg: '#F0FDF4', border: '#86EFAC', text: '#166534', label: '✓ Direct' },
-    warn: { bg: '#FFFBEB', border: '#FCD34D', text: '#92400E', label: '⚠ Via Stop' },
-    blocked: { bg: '#FEF2F2', border: '#FCA5A5', text: '#991B1B', label: '✗ Blocked' },
+    ok: { bg: '#F0FDF4', border: '#86EFAC', text: '#166534', label: '✓ Compatible' },
+    warn: { bg: '#FFFBEB', border: '#FCD34D', text: '#92400E', label: '⚠ Restricted' },
+    blocked: { bg: '#FEF2F2', border: '#FCA5A5', text: '#991B1B', label: '✗ Incompatible' },
 }
 
 export default function AdminMatrix() {
@@ -23,9 +23,9 @@ export default function AdminMatrix() {
 
             {/* Page header */}
             <div className="bg-[#003087] px-6 py-6">
-                <h1 className="text-2xl font-black text-white">Version Compatibility Matrix</h1>
+                <h1 className="text-2xl font-black text-white">Fleet & Line Compatibility Matrix</h1>
                 <p className="text-blue-200 text-sm mt-1">
-                    Shows which source versions can upgrade directly to each target version.
+                    Verify which train models can be safely deployed and routed on specific metro lines.
                 </p>
             </div>
 
@@ -48,25 +48,24 @@ export default function AdminMatrix() {
                     <table className="w-full border-collapse text-sm" style={{ minWidth: '520px' }}>
                         <thead>
                             <tr>
-                                {/* Top-left corner */}
                                 <th className="sticky left-0 z-20 bg-[#003087] text-white font-black text-xs px-4 py-3 text-left border-r border-blue-700 whitespace-nowrap">
-                                    Source ↓ / Target →
+                                    Train Fleet ↓ / Metro Line →
                                 </th>
-                                {COMPATIBILITY_VERSIONS.map(v => (
-                                    <th key={v} className="bg-[#003087] text-white font-bold text-xs px-4 py-3 text-center min-w-[110px] border-r border-blue-700 last:border-r-0">
-                                        {v}
+                                {MATRIX_LINES.map(line => (
+                                    <th key={line} className="bg-[#003087] text-white font-bold text-xs px-4 py-3 text-center min-w-[110px] border-r border-blue-700 last:border-r-0">
+                                        {line}
                                     </th>
                                 ))}
                             </tr>
                         </thead>
                         <tbody>
-                            {COMPATIBILITY_VERSIONS.map((srcVer, ri) => (
-                                <tr key={srcVer} className="border-b border-gray-100 last:border-b-0">
+                            {TRAIN_FLEETS.map((train, ri) => (
+                                <tr key={train} className="border-b border-gray-100 last:border-b-0">
                                     {/* Sticky row header */}
                                     <td className="sticky left-0 z-10 bg-gray-50 border-r border-gray-200 px-4 py-3 font-black text-gray-800 text-xs whitespace-nowrap">
-                                        {srcVer}
+                                        {train}
                                     </td>
-                                    {COMPATIBILITY_MATRIX[ri].map((cell, ci) => {
+                                    {TRAIN_COMPATIBILITY_MATRIX[ri].map((cell, ci) => {
                                         const style = CELL_STYLES[cell.status]
                                         const isHovered = tooltip?.row === ri && tooltip?.col === ci
                                         return (
@@ -91,7 +90,7 @@ export default function AdminMatrix() {
                                                         className="absolute z-50 bottom-full left-1/2 -translate-x-1/2 mb-2 w-56 bg-gray-900 text-white text-xs rounded-xl px-3 py-2.5 shadow-xl text-left pointer-events-none"
                                                     >
                                                         <p className="font-bold mb-1" style={{ color: style.border }}>
-                                                            {COMPATIBILITY_VERSIONS[ri]} → {COMPATIBILITY_VERSIONS[ci]}
+                                                            {TRAIN_FLEETS[ri]} → {MATRIX_LINES[ci]}
                                                         </p>
                                                         <p className="text-gray-300 leading-relaxed">{cell.reason}</p>
                                                         {/* Arrow */}
@@ -110,7 +109,7 @@ export default function AdminMatrix() {
                 {/* Info note */}
                 <p className="text-xs text-gray-400 mt-4 flex items-center gap-1.5">
                     <Info size={12} />
-                    This matrix reflects the MoveInSync metro data format versions. Green = immediate upgrade, Amber = intermediate step required, Red = not supported.
+                    This matrix cross-references physical track gauge, power collection systems (OHE vs Third Rail), and signaling automation limits. Green = Compatible, Amber = Restricted, Red = Incompatible.
                 </p>
             </div>
         </div>

@@ -169,7 +169,7 @@ export default function Profile() {
                             </div>
                         </motion.div>
 
-                        {/* MetroSync Pass widget */}
+                        {/* MoveInSync Pass widget */}
                         <motion.div
                             initial={{ opacity: 0, x: 12 }}
                             animate={{ opacity: 1, x: 0 }}
@@ -182,7 +182,7 @@ export default function Profile() {
                                 <div className="flex-1 bg-[#00873D]" />
                             </div>
                             <div className="absolute -right-8 -bottom-8 w-36 h-36 rounded-full bg-white/5" />
-                            <p className="text-blue-200 text-xs font-bold uppercase tracking-wider mb-1 pt-1">MetroSync Pass</p>
+                            <p className="text-blue-200 text-xs font-bold uppercase tracking-wider mb-1 pt-1">MoveInSync Pass</p>
                             <p className="text-3xl font-black text-white mb-0.5">₹1,240</p>
                             <p className="text-blue-200 text-xs mb-4">Available Balance</p>
                             <button className="w-full py-2.5 bg-[#D7231A] text-white rounded-xl font-bold text-sm hover:bg-red-700 transition-colors">

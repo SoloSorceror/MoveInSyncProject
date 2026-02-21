@@ -67,7 +67,7 @@ export default function Login() {
                             <Train size={22} className="text-white" />
                         </div>
                         <div>
-                            <p className="font-black text-white text-lg">Metro<span className="text-[#D7231A]">Sync</span></p>
+                            <p className="font-black text-white text-lg">MoveIn<span className="text-yellow-300">Sync</span></p>
                             <p className="text-blue-200 text-xs font-semibold tracking-wider">SMART TRANSIT</p>
                         </div>
                     </div>
@@ -110,7 +110,7 @@ export default function Login() {
                     </div>
 
                     <h1 className="text-2xl font-black text-[#003087] mb-1">Welcome Back</h1>
-                    <p className="text-gray-500 text-sm mb-6">Sign in to continue to MetroSync</p>
+                    <p className="text-gray-500 text-sm mb-6">Sign in to continue to MoveInSync</p>
 
                     {/* Role Toggle */}
                     <div className="flex bg-gray-100 rounded-xl p-1 mb-6 gap-1">

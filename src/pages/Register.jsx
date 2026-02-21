@@ -53,7 +53,7 @@ export default function Register() {
                             <Train size={22} className="text-white" />
                         </div>
                         <div>
-                            <p className="font-black text-white text-lg">Metro<span className="text-[#D7231A]">Sync</span></p>
+                            <p className="font-black text-white text-lg">MoveIn<span className="text-yellow-300">Sync</span></p>
                             <p className="text-blue-200 text-xs font-semibold tracking-wider">SMART TRANSIT</p>
                         </div>
                     </div>
@@ -103,7 +103,7 @@ export default function Register() {
                     </div>
 
                     <h1 className="text-2xl font-black text-[#003087] mb-1">Create Account</h1>
-                    <p className="text-gray-500 text-sm mb-6">Join MetroSync for seamless daily travel</p>
+                    <p className="text-gray-500 text-sm mb-6">Join MoveInSync for seamless daily travel</p>
 
                     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">

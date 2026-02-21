@@ -1,30 +1,39 @@
 import { useState, useEffect } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link, useNavigate, useLocation } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { QRCodeSVG } from 'qrcode.react'
+import html2canvas from 'html2canvas'
 import {
     CheckCircle2, Download, MapPin, ArrowRight, Train,
     Calendar, Users, TicketCheck, Printer, RotateCcw
 } from 'lucide-react'
 
-/* ── Use the same dummy data shape as Dashboard ──────────────── */
-const TICKET = {
-    id: 'MTS-20240221-7834',
-    qrData: 'METRO-SYNC-TKT-7834-RAJIV-NEWDELHI',
-    from: 'Rajiv Chowk',
-    to: 'New Delhi',
-    line: 'Yellow Line',
-    date: '21 Feb 2026',
-    time: '09:45 AM',
-    passengers: 2,
-    type: 'Single Journey',
-    fare: '₹40',
-    status: 'Confirmed',
-}
-
 export default function BookingConfirmation() {
     const navigate = useNavigate()
+    const location = useLocation()
     const [qrReady, setQrReady] = useState(false)
+
+    // Parse state from Home.jsx
+    const route = location.state?.route || {
+        id: 'R-DEFAULT', from: { name: 'Rajiv Chowk', line: 'Yellow Line' }, to: { name: 'New Delhi', line: 'Yellow Line' }, fare: '₹40'
+    }
+    const passengers = location.state?.passengers || 1
+    const fareNum = parseInt(route.fare.replace(/[^0-9]/g, ''), 10) || 40
+
+    // Build dynamic ticket object
+    const TICKET = {
+        id: `MTS-${new Date().toISOString().slice(0, 10).replace(/-/g, '')}-${Math.floor(1000 + Math.random() * 9000)}`,
+        qrData: `METRO-SYNC-TKT-${route.id}-${passengers}`,
+        from: route.from.name,
+        to: route.to.name,
+        line: route.from.line,
+        date: new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }),
+        time: new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }),
+        passengers: passengers,
+        type: 'Single Journey',
+        fare: `₹${fareNum * passengers}`,
+        status: 'Confirmed',
+    }
 
     // Simulate async QR generation (1.5s)
     useEffect(() => {
@@ -32,16 +41,23 @@ export default function BookingConfirmation() {
         return () => clearTimeout(t)
     }, [])
 
-    const handleDownload = () => {
-        // Open a print-only view of the ticket
-        const printContents = document.getElementById('ticket-card')?.outerHTML
-        if (!printContents) return
-        const win = window.open('', '_blank')
-        win.document.write(`<html><head><title>MetroSync Ticket</title>
-            <style>body{margin:0;display:flex;align-items:center;justify-content:center;min-height:100vh;background:#f3f4f6;font-family:sans-serif}</style>
-            </head><body>${printContents}</body></html>`)
-        win.document.close()
-        setTimeout(() => win.print(), 400)
+    const handleDownload = async () => {
+        const ticketElement = document.getElementById('ticket-card')
+        if (!ticketElement) return
+
+        try {
+            // Wait for QR code to be rendered fully
+            if (!qrReady) return;
+
+            const canvas = await html2canvas(ticketElement, { scale: 3, useCORS: true, backgroundColor: '#ffffff' })
+            const image = canvas.toDataURL('image/png', 1.0)
+            const link = document.createElement('a')
+            link.download = `${TICKET.id}.png`
+            link.href = image
+            link.click()
+        } catch (error) {
+            console.error("Could not generate ticket image", error)
+        }
     }
 
     return (

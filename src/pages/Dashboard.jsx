@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import { SkeletonCard } from '@/components/Skeleton'
 import { motion, AnimatePresence } from 'framer-motion'
 import { QRCodeSVG } from 'qrcode.react'
+import html2canvas from 'html2canvas'
 import {
     Train, MapPin, Download, Navigation, Clock,
     TicketCheck, ChevronRight, TrendingUp, Wallet, X
@@ -29,6 +30,22 @@ export default function Dashboard() {
     const [activeTab, setActiveTab] = useState('tickets')
     const [isLoading, setIsLoading] = useState(true)
 
+    const handleDownloadTicket = async () => {
+        const ticketElement = document.getElementById('active-ticket-card')
+        if (!ticketElement) return
+
+        try {
+            const canvas = await html2canvas(ticketElement, { scale: 3, useCORS: true, backgroundColor: '#ffffff' })
+            const image = canvas.toDataURL('image/png', 1.0)
+            const link = document.createElement('a')
+            link.download = `${ACTIVE_TICKET.id}.png`
+            link.href = image
+            link.click()
+        } catch (error) {
+            console.error("Could not download ticket image", error)
+        }
+    }
+
     useEffect(() => {
         const timer = setTimeout(() => setIsLoading(false), 800)
         return () => clearTimeout(timer)
@@ -49,7 +66,7 @@ export default function Dashboard() {
                     <div>
                         <h1 className="text-2xl md:text-3xl font-black text-white mb-1">My Dashboard</h1>
                         <p className="text-blue-200 text-sm font-medium flex items-center gap-2">
-                            <Train size={14} /> MetroSync Passenger Portal
+                            <Train size={14} /> MoveInSync Passenger Portal
                         </p>
                     </div>
                     <Link to="/"
@@ -98,6 +115,7 @@ export default function Dashboard() {
                             <>
                                 {/* Active Ticket — Boarding Pass */}
                                 <motion.div
+                                    id="active-ticket-card"
                                     initial={{ opacity: 0, y: 16 }}
                                     animate={{ opacity: 1, y: 0 }}
                                     transition={{ delay: 0.1 }}
@@ -175,7 +193,7 @@ export default function Dashboard() {
                                                 </div>
 
                                                 <div className="flex gap-2">
-                                                    <button className="flex-1 flex items-center justify-center gap-2 py-2.5 bg-[#003087] text-white rounded-xl font-bold text-sm hover:bg-blue-900 transition-colors">
+                                                    <button onClick={handleDownloadTicket} className="flex-1 flex items-center justify-center gap-2 py-2.5 bg-[#003087] text-white rounded-xl font-bold text-sm hover:bg-blue-900 transition-colors">
                                                         <Download size={14} /> Save Ticket
                                                     </button>
                                                     <Link to="/map" className="flex-1 flex items-center justify-center gap-2 py-2.5 bg-gray-50 border border-gray-200 text-gray-800 rounded-xl font-bold text-sm hover:bg-gray-100 transition-colors">
@@ -267,7 +285,7 @@ export default function Dashboard() {
                                 <div className="flex-1 bg-[#00873D]" />
                             </div>
                             <div className="absolute -right-8 -bottom-8 w-40 h-40 rounded-full bg-white/5" />
-                            <p className="text-blue-200 text-xs font-bold uppercase tracking-wider mb-1">MetroSync Pass</p>
+                            <p className="text-blue-200 text-xs font-bold uppercase tracking-wider mb-1">MoveInSync Pass</p>
                             <p className="text-3xl font-black text-white mb-0.5">₹1,240</p>
                             <p className="text-blue-200 text-xs mb-4">Wallet Balance</p>
                             <button className="w-full py-2.5 bg-[#D7231A] text-white rounded-xl font-bold text-sm hover:bg-red-700 transition-colors">

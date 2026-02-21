@@ -223,63 +223,62 @@ export const ACTIVE_TICKET_DATA = {
 };
 
 /* ── Admin: Compatibility Matrix ───────────────────────────────────── */
-export const COMPATIBILITY_VERSIONS = ['v1.0', 'v1.1', 'v1.2', 'v2.0', 'v2.1', 'v3.0']
+export const TRAIN_FLEETS = [
+    'Bombardier Movia',
+    'Alstom Metropolis',
+    'Hyundai Rotem',
+    'BEML RS-1',
+    'CAF Beas'
+];
 
-// COMPATIBILITY_MATRIX[sourceIdx][targetIdx] = { status, reason }
-// status: 'ok' | 'warn' | 'blocked'
-export const COMPATIBILITY_MATRIX = [
-    // v1.0 →
+export const MATRIX_LINES = [
+    'Yellow Line', 'Blue Line', 'Red Line', 'Magenta Line', 'Orange Line', 'Rapid Metro'
+];
+
+export const TRAIN_COMPATIBILITY_MATRIX = [
+    // Bombardier Movia
     [
-        { status: 'ok', reason: 'Same version — no upgrade needed.' },
-        { status: 'ok', reason: 'Direct upgrade allowed. Minor bug fixes only.' },
-        { status: 'warn', reason: 'Requires running migration script m1.2.sh before upgrading.' },
-        { status: 'blocked', reason: 'Cannot upgrade directly from v1.0 to v2.0. Upgrade to v1.2 first.' },
-        { status: 'blocked', reason: 'Cannot upgrade directly from v1.0 to v2.1. Upgrade to v1.2 then v2.0.' },
-        { status: 'blocked', reason: 'Cannot upgrade directly from v1.0 to v3.0. Must go through v1.2 → v2.0 → v3.0.' },
+        { status: 'ok', reason: 'Fully compatible standard gauge.' },
+        { status: 'ok', reason: 'Fully compatible standard gauge.' },
+        { status: 'blocked', reason: 'Red Line uses broad gauge.' },
+        { status: 'ok', reason: 'Compatible with signaling.' },
+        { status: 'warn', reason: 'Requires software patch for ATO.' },
+        { status: 'blocked', reason: 'Rapid Metro track radius too tight.' },
     ],
-    // v1.1 →
+    // Alstom Metropolis
     [
-        { status: 'blocked', reason: 'Downgrade not supported. Restore from backup.' },
-        { status: 'ok', reason: 'Same version — no upgrade needed.' },
-        { status: 'ok', reason: 'Direct upgrade allowed. Run db-patch-1.1-1.2.sql post-install.' },
-        { status: 'warn', reason: 'Skip upgrade — requires v1.2 as intermediate stop first.' },
-        { status: 'blocked', reason: 'Cannot upgrade directly. Must pass through v1.2 → v2.0.' },
-        { status: 'blocked', reason: 'Cannot upgrade directly from v1.1 to v3.0.' },
+        { status: 'ok', reason: 'Native fleet for this line.' },
+        { status: 'warn', reason: 'Platform length restriction (6-coach max).' },
+        { status: 'blocked', reason: 'Red Line uses broad gauge.' },
+        { status: 'ok', reason: 'CBTC signaling compatible.' },
+        { status: 'ok', reason: 'High-speed certified.' },
+        { status: 'blocked', reason: 'Incompatible power collection.' },
     ],
-    // v1.2 →
+    // Hyundai Rotem
     [
-        { status: 'blocked', reason: 'Downgrade not supported.' },
-        { status: 'blocked', reason: 'Downgrade not supported.' },
-        { status: 'ok', reason: 'Same version — no upgrade needed.' },
-        { status: 'ok', reason: 'Direct upgrade allowed. Full compatibility confirmed.' },
-        { status: 'ok', reason: 'Direct upgrade allowed. Run changelog v2.1 scripts.' },
-        { status: 'warn', reason: 'Upgrade requires v2.0 as an intermediate step first.' },
+        { status: 'blocked', reason: 'Broad gauge train on standard gauge track.' },
+        { status: 'blocked', reason: 'Broad gauge train on standard gauge track.' },
+        { status: 'ok', reason: 'Native broad gauge fleet.' },
+        { status: 'blocked', reason: 'Broad gauge train on standard gauge track.' },
+        { status: 'blocked', reason: 'Broad gauge train on standard gauge track.' },
+        { status: 'blocked', reason: 'Incompatible track gauge.' },
     ],
-    // v2.0 →
+    // BEML RS-1
     [
-        { status: 'blocked', reason: 'Downgrade not supported.' },
-        { status: 'blocked', reason: 'Downgrade not supported.' },
-        { status: 'blocked', reason: 'Downgrade not supported.' },
-        { status: 'ok', reason: 'Same version — no upgrade needed.' },
-        { status: 'ok', reason: 'Direct upgrade allowed. Minor API additions only.' },
-        { status: 'ok', reason: 'Direct upgrade allowed. Run migration v3.0.sql.' },
+        { status: 'blocked', reason: 'Broad gauge train.' },
+        { status: 'blocked', reason: 'Broad gauge train.' },
+        { status: 'ok', reason: 'Fully compatible with legacy signaling.' },
+        { status: 'blocked', reason: 'Broad gauge train.' },
+        { status: 'blocked', reason: 'Broad gauge train.' },
+        { status: 'blocked', reason: 'Incompatible track gauge.' },
     ],
-    // v2.1 →
+    // CAF Beas
     [
-        { status: 'blocked', reason: 'Downgrade not supported.' },
-        { status: 'blocked', reason: 'Downgrade not supported.' },
-        { status: 'blocked', reason: 'Downgrade not supported.' },
-        { status: 'blocked', reason: 'Downgrade not supported.' },
-        { status: 'ok', reason: 'Same version — no upgrade needed.' },
-        { status: 'ok', reason: 'Direct upgrade allowed. Adds new station-graph indexing.' },
-    ],
-    // v3.0 →
-    [
-        { status: 'blocked', reason: 'Downgrade not supported.' },
-        { status: 'blocked', reason: 'Downgrade not supported.' },
-        { status: 'blocked', reason: 'Downgrade not supported.' },
-        { status: 'blocked', reason: 'Downgrade not supported.' },
-        { status: 'blocked', reason: 'Downgrade not supported.' },
-        { status: 'ok', reason: 'Same version — no upgrade needed.' },
-    ],
-]
+        { status: 'blocked', reason: 'Requires third-rail power.' },
+        { status: 'blocked', reason: 'Requires third-rail power.' },
+        { status: 'blocked', reason: 'Broad gauge track.' },
+        { status: 'blocked', reason: 'Requires third-rail power.' },
+        { status: 'ok', reason: 'Airport Express native fleet.' },
+        { status: 'ok', reason: 'Standard gauge, compatible power.' },
+    ]
+];

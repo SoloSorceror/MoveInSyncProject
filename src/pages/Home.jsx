@@ -25,7 +25,7 @@ const STATS = [
 
 const SERVICE_ALERTS = [
     { date: '21 Feb 2026', type: 'update', title: 'Yellow Line: Slight delays between Rajiv Chowk & Hauz Khas due to maintenance. Normal by 6 PM.', urgent: true },
-    { date: '20 Feb 2026', type: 'info', title: 'MetroSync app update v2.4.1 — faster ticket booking, improved QR scanner.', urgent: false },
+    { date: '20 Feb 2026', type: 'info', title: 'MoveInSync app update v2.4.1 — faster ticket booking, improved QR scanner.', urgent: false },
     { date: '19 Feb 2026', type: 'info', title: 'New Airport Express schedule effective March 1. First train from New Delhi at 04:45 AM.', urgent: false },
     { date: '18 Feb 2026', type: 'alert', title: 'Magenta Line extended to Janakpuri West — 3 new stations open from Feb 20.', urgent: false },
 ]
@@ -139,7 +139,7 @@ export default function Home() {
 
     const handleSelectRoute = (route) => {
         setSelectedRoute(route)
-        navigate(`/booking/${route.id}`)
+        navigate(`/booking/${route.id}`, { state: { route, passengers: tickets } })
     }
 
     const StationList = ({ stations, onSelect }) => (

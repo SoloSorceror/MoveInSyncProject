@@ -67,7 +67,7 @@ export default function Footer() {
                                 <Train size={18} className="text-white" />
                             </div>
                             <div>
-                                <p className="font-black text-white text-base">Metro<span className="text-yellow-300">Sync</span></p>
+                                <p className="font-black text-white text-base">MoveIn<span className="text-yellow-300">Sync</span></p>
                                 <p className="text-blue-200 text-[10px] font-bold tracking-wider">SMART TRANSIT</p>
                             </div>
                         </div>
@@ -127,7 +127,7 @@ export default function Footer() {
                 {/* Bottom bar */}
                 <div className="border-t border-white/10 pt-5 flex flex-col sm:flex-row items-center justify-between gap-3">
                     <p className="text-blue-200 text-xs text-center sm:text-left">
-                        © 2026 MetroSync India. All rights reserved. A Government of India Initiative.
+                        © 2026 MoveInSync India. All rights reserved. A Government of India Initiative.
                     </p>
                     <div className="flex items-center gap-4">
                         {['Privacy Policy', 'Terms of Use', 'RTI'].map(t => (

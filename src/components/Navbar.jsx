@@ -45,7 +45,7 @@ export default function Navbar() {
                                 <div className="absolute inset-0 rounded-full ring-2 ring-offset-1 ring-[#003087] opacity-0 group-hover:opacity-100 transition-opacity" />
                             </div>
                             <div className="hidden sm:block leading-tight">
-                                <p className="font-black text-[#003087] text-base tracking-tight">Metro<span className="text-[#D7231A]">Sync</span></p>
+                                <p className="font-black text-[#003087] text-base tracking-tight">MoveIn<span className="text-[#D7231A]">Sync</span></p>
                                 <p className="text-[10px] text-gray-500 font-semibold tracking-wider">SMART TRANSIT BOOKING</p>
                             </div>
                         </Link>
@@ -81,8 +81,8 @@ export default function Navbar() {
                         <div className="flex items-center gap-2">
                             {isAuthenticated ? (
                                 <div className="hidden md:flex items-center gap-2">
-                                    <Link to="/profile" className={`flex items-center gap-2 px-3 py-1.5 rounded-lg border hover:shadow-sm transition-all ${user?.role === 'admin' ? 'border-indigo-200 bg-indigo-50 hover:bg-indigo-100' : 'border-gray-200 bg-gray-50 hover:bg-gray-100'}`}>
-                                        <div className={`w-7 h-7 rounded-md flex items-center justify-center text-white text-xs font-bold ${user?.role === 'admin' ? 'bg-indigo-600' : 'bg-[#D7231A]'}`}>
+                                    <Link to="/profile" className={`flex items-center gap-2 px-3 py-1.5 rounded-full border hover:shadow-sm transition-all ${user?.role === 'admin' ? 'border-indigo-200 bg-indigo-50 hover:bg-indigo-100' : 'border-gray-200 bg-gray-50 hover:bg-gray-100'}`}>
+                                        <div className={`w-7 h-7 rounded-full flex items-center justify-center text-white text-xs font-bold ${user?.role === 'admin' ? 'bg-indigo-600' : 'bg-[#D7231A]'}`}>
                                             {user?.name?.charAt(0) || 'U'}
                                         </div>
                                         <span className="text-sm font-semibold text-gray-800">{user?.name}</span>
@@ -167,7 +167,7 @@ export default function Navbar() {
 
                             {/* Drawer Header */}
                             <div className="bg-[#003087] px-5 py-4 flex items-center justify-between">
-                                <span className="font-black text-white text-base">Metro<span className="text-[#D7231A]">Sync</span></span>
+                                <span className="font-black text-white text-base">MoveIn<span className="text-yellow-300">Sync</span></span>
                                 <button onClick={() => setSidebarOpen(false)} className="p-1.5 rounded-lg hover:bg-white/10">
                                     <X size={20} className="text-white" />
                                 </button>

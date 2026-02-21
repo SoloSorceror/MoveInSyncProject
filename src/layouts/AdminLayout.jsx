@@ -66,12 +66,12 @@ export default function AdminLayout() {
                             <Train size={18} className="text-white" />
                         </div>
                         <div>
-                            <p className="font-black text-white text-base">Metro<span className="text-yellow-300">Sync</span></p>
+                            <p className="font-black text-white text-base">MoveIn<span className="text-yellow-300">Sync</span></p>
                             <p className="text-blue-200 text-[10px] font-bold tracking-wider">ADMIN PORTAL</p>
                         </div>
                     </div>
                     {/* Indian Flag + Brand */}
-                    <div className="flex items-center gap-3 bg-white/10 rounded-xl px-3 py-2.5 border border-white/10">
+                    <div className="flex items-center gap-3 bg-white/10 rounded-xl px-3 py-2.5 border border-white/10 hidden">
                         <IndianFlag size={22} />
                         <div>
                             <p className="text-white font-black text-xs">MoveInSync</p>
@@ -83,7 +83,7 @@ export default function AdminLayout() {
                 {/* User card */}
                 <div className="px-4 py-3 border-b border-white/10 flex-shrink-0">
                     <div className="bg-white/10 rounded-xl p-3 flex items-center gap-3">
-                        <div className="w-9 h-9 rounded-lg bg-[#D7231A] flex items-center justify-center font-black text-white text-sm flex-shrink-0">
+                        <div className="w-9 h-9 rounded-full bg-[#D7231A] flex items-center justify-center font-black text-white text-sm flex-shrink-0">
                             {user?.name?.charAt(0) || 'A'}
                         </div>
                         <div className="min-w-0 flex-1">
