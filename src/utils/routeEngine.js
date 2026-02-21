@@ -211,6 +211,8 @@ export function computeRoutes(fromStation, toStation, network) {
             fareStr: `₹${fare}`,
             segments,
             interchanges,
+            from: fromStation,
+            to: toStation,
         }
     })
 

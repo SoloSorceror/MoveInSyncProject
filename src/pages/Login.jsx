@@ -139,7 +139,7 @@ export default function Login() {
                             <label className="block text-xs font-bold text-gray-600 uppercase tracking-wider mb-1.5">Email Address</label>
                             <div className="relative">
                                 <Mail size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400" />
-                                <input type="email" {...register('email')} placeholder="name@example.com"
+                                <input type="email" {...register('email')}
                                     className={`w-full pl-10 pr-4 py-2.5 border rounded-xl text-gray-800 bg-gray-50 text-sm focus:outline-none focus:ring-2 transition-all focus:bg-white ${errors.email
                                         ? 'border-red-400 focus:ring-red-200'
                                         : role === 'admin'
@@ -158,7 +158,7 @@ export default function Login() {
                             </div>
                             <div className="relative">
                                 <Lock size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400" />
-                                <input type="password" {...register('password')} placeholder="••••••••"
+                                <input type="password" {...register('password')}
                                     className={`w-full pl-10 pr-4 py-2.5 border rounded-xl text-gray-800 bg-gray-50 text-sm focus:outline-none focus:ring-2 transition-all focus:bg-white ${errors.password
                                         ? 'border-red-400 focus:ring-red-200'
                                         : role === 'admin'

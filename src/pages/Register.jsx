@@ -13,10 +13,10 @@ const schema = z.object({
 })
 
 const FIELDS = [
-    { name: 'fullName', icon: User, type: 'text', label: 'Full Name', placeholder: 'John Doe' },
-    { name: 'email', icon: Mail, type: 'email', label: 'Email Address', placeholder: 'name@example.com' },
-    { name: 'phone', icon: Phone, type: 'tel', label: 'Mobile Number', placeholder: '+91 98765 43210' },
-    { name: 'password', icon: Lock, type: 'password', label: 'Password', placeholder: '••••••••' },
+    { name: 'fullName', icon: User, type: 'text', label: 'Full Name' },
+    { name: 'email', icon: Mail, type: 'email', label: 'Email Address' },
+    { name: 'phone', icon: Phone, type: 'tel', label: 'Mobile Number' },
+    { name: 'password', icon: Lock, type: 'password', label: 'Password' },
 ]
 
 export default function Register() {
@@ -107,12 +107,12 @@ export default function Register() {
 
                     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                            {FIELDS.map(({ name, icon: Icon, type, label, placeholder }) => (
+                            {FIELDS.map(({ name, icon: Icon, type, label }) => (
                                 <div key={name} className={name === 'password' ? 'sm:col-span-2' : ''}>
                                     <label className="block text-xs font-bold text-gray-600 uppercase tracking-wider mb-1.5">{label}</label>
                                     <div className="relative">
                                         <Icon size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400" />
-                                        <input type={type} {...register(name)} placeholder={placeholder}
+                                        <input type={type} {...register(name)}
                                             className={`w-full pl-10 pr-4 py-2.5 border rounded-xl text-gray-800 bg-gray-50 text-sm focus:outline-none focus:ring-2 focus:border-[#003087] focus:ring-[#003087]/20 transition-all focus:bg-white ${errors[name] ? 'border-red-400 focus:ring-red-200 focus:border-red-400' : 'border-gray-200'}`} />
                                     </div>
                                     {errors[name] && <p className="text-red-500 text-xs mt-1">{errors[name].message}</p>}

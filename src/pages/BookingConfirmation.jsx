@@ -13,20 +13,29 @@ export default function BookingConfirmation() {
     const location = useLocation()
     const [qrReady, setQrReady] = useState(false)
 
-    // Parse state from Home.jsx
+    // Parse state safely
     const route = location.state?.route || {
-        id: 'R-DEFAULT', from: { name: 'Rajiv Chowk', line: 'Yellow Line' }, to: { name: 'New Delhi', line: 'Yellow Line' }, fare: '₹40'
+        id: 'R-DEFAULT',
+        from: { name: 'Rajiv Chowk', line: 'Yellow Line' },
+        to: { name: 'New Delhi', line: 'Yellow Line' },
+        fareStr: '₹40',
+        fare: 40
     }
     const passengers = location.state?.passengers || 1
-    const fareNum = parseInt(route.fare.replace(/[^0-9]/g, ''), 10) || 40
 
-    // Build dynamic ticket object
+    // Defensive fare extraction
+    const rawFare = route.fareStr || route.fare || '40'
+    const fareNum = typeof rawFare === 'string'
+        ? (parseInt(rawFare.replace(/[^0-9]/g, ''), 10) || 40)
+        : (parseInt(rawFare, 10) || 40)
+
+    // Build dynamic ticket object with null safety
     const TICKET = {
         id: `MTS-${new Date().toISOString().slice(0, 10).replace(/-/g, '')}-${Math.floor(1000 + Math.random() * 9000)}`,
-        qrData: `METRO-SYNC-TKT-${route.id}-${passengers}`,
-        from: route.from.name,
-        to: route.to.name,
-        line: route.from.line,
+        qrData: `MOVE-IN-SYNC-TKT-${route.id || 'DEFAULT'}-${passengers}`,
+        from: route.from?.name || 'Unknown',
+        to: route.to?.name || 'Unknown',
+        line: route.from?.line || 'Metro Network',
         date: new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }),
         time: new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }),
         passengers: passengers,
