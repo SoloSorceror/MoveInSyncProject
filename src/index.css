@@ -1,0 +1,38 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+@import "tailwindcss";
+@plugin "daisyui";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --color-metro-primary: #164880;
+  --color-metro-dark: #0f172a;
+  --color-metro-accent: #eb2226;
+  --font-sans: 'Inter', sans-serif;
+  --animate-pulse-slow: pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@layer base {
+  body {
+    @apply antialiased bg-slate-50 text-slate-900 font-sans transition-colors duration-300;
+  }
+
+  html.dark body {
+    @apply bg-slate-900 text-slate-100;
+  }
+}
+
+@layer utilities {
+  .glass-panel {
+    @apply bg-white/60 backdrop-blur-xl border border-white/20 shadow-2xl shadow-blue-900/10;
+  }
+
+  .dark .glass-panel {
+    @apply bg-slate-800/60 border-slate-700/50 shadow-2xl shadow-black/40;
+  }
+
+  .text-gradient {
+    @apply bg-clip-text text-transparent bg-gradient-to-r;
+  }
+}
