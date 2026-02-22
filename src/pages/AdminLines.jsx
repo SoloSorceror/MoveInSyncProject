@@ -61,9 +61,9 @@ const SortableStationItem = React.memo(function SortableStationItem({ id, statio
 
             <div className="flex-1 flex items-center justify-between">
                 <div className="flex flex-col">
-                    <span className="font-medium text-slate-800 dark:text-white">{stationName}</span>
+                    <span className="font-semibold text-gray-800">{stationName}</span>
                     {isInterchange && (
-                        <span className="text-xs font-semibold text-[#003087] mt-0.5">Interchange Hub</span>
+                        <span className="text-xs font-bold text-[#003087] mt-0.5">Interchange Hub</span>
                     )}
                 </div>
 
