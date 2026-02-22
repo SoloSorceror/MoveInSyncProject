@@ -26,3 +26,5 @@ dist-ssr
 # Generated Documentation & Samples
 /docs/
 /public/sample-import.csv
+*.pptx
+/public/Architecting_MetroSync.pptx
