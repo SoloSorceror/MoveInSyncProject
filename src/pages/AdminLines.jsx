@@ -200,9 +200,9 @@ export default function AdminLines() {
                                 : 'text-gray-600 hover:bg-gray-100 bg-gray-50 border border-gray-200'
                                 }`}
                         >
-                            <div className="flex items-center gap-3 truncate">
+                            <div className="flex items-center gap-3 truncate min-w-0 flex-1">
                                 <span className={`w-3 h-3 rounded-full flex-shrink-0 ${line.color}`} />
-                                <span className="truncate">{line.name}</span>
+                                <span className="truncate min-w-0 flex-1 text-left">{line.name}</span>
                             </div>
                             <span className={`text-xs px-2 py-0.5 rounded-md font-bold flex-shrink-0 ${activeLineId === line.id ? 'bg-white/20 text-white' : 'bg-gray-200 text-gray-600'}`}>
                                 {line.stations.length}
