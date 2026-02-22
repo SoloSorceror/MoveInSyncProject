@@ -41,7 +41,7 @@ const FOOTER_LINKS = [
             { label: 'Sign In', to: '/login' },
             { label: 'Register', to: '/register' },
             { label: 'My Profile', to: '/profile' },
-            { label: 'Help & Support', to: '/' },
+            { label: 'Help & Support', to: 'mailto:support@demo.moveinsync.in' },
         ]
     },
 ]
@@ -111,11 +111,19 @@ export default function Footer() {
                                 <ul className="space-y-2.5">
                                     {links.map(link => (
                                         <li key={link.label}>
-                                            <Link to={link.to}
-                                                className="text-blue-200 text-sm font-medium hover:text-white hover:pl-1 transition-all duration-200 flex items-center gap-1.5 group">
-                                                <span className="w-1 h-1 rounded-full bg-[#D7231A] opacity-0 group-hover:opacity-100 transition-opacity" />
-                                                {link.label}
-                                            </Link>
+                                            {link.to.startsWith('mailto:') ? (
+                                                <a href={link.to}
+                                                    className="text-blue-200 text-sm font-medium hover:text-white hover:pl-1 transition-all duration-200 flex items-center gap-1.5 group">
+                                                    <span className="w-1 h-1 rounded-full bg-[#D7231A] opacity-0 group-hover:opacity-100 transition-opacity" />
+                                                    {link.label}
+                                                </a>
+                                            ) : (
+                                                <Link to={link.to}
+                                                    className="text-blue-200 text-sm font-medium hover:text-white hover:pl-1 transition-all duration-200 flex items-center gap-1.5 group">
+                                                    <span className="w-1 h-1 rounded-full bg-[#D7231A] opacity-0 group-hover:opacity-100 transition-opacity" />
+                                                    {link.label}
+                                                </Link>
+                                            )}
                                         </li>
                                     ))}
                                 </ul>

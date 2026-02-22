@@ -53,7 +53,7 @@ export default function Login() {
                 transition={{ duration: 0.35 }}
                 className="w-full max-w-4xl bg-white rounded-3xl shadow-xl border border-gray-200 overflow-hidden flex flex-col md:flex-row"
             >
-                {/* ── Left Panel (decorative, DMRC-style navy) */}
+                {/* ── Left Panel  */}
                 <div className="hidden md:flex md:w-[42%] flex-col bg-[#003087] p-10 relative overflow-hidden">
                     {/* Tricolor strip at top */}
                     <div className="flex h-1.5 rounded-full overflow-hidden mb-8">

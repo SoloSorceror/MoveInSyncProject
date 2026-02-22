@@ -5,7 +5,7 @@ import { Train, LayoutDashboard, Map, Settings, Grid3x3, ChevronRight, Menu, X, 
 import { useAuthStore } from '@/store/authStore'
 import { ADMIN_TOP_BAR_STATS } from '@/data/dummyData'
 
-/* ── Only the routes that actually exist + are useful ─────────── */
+/* ── routes  ─────────── */
 const NAV_ITEMS = [
     { to: '/admin', label: 'Overview', icon: LayoutDashboard, end: true },
     { to: '/admin/lines', label: 'Network Lines', icon: Map, end: false },
@@ -94,7 +94,7 @@ export default function AdminLayout() {
                     </div>
                 </div>
 
-                {/* Nav — fills remaining space */}
+                {/* Nav */}
                 <nav className="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
                     <p className="text-blue-300/60 text-[10px] font-black uppercase tracking-widest px-3 mb-3">Navigation</p>
                     {NAV_ITEMS.map(({ to, label, icon: Icon, end }) => (

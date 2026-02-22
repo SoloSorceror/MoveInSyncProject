@@ -145,9 +145,9 @@ export default function Navbar() {
 
                         {/* Right-side quick links */}
                         <div className="ml-auto hidden lg:flex items-center gap-1">
-                            <Link to="/register" className="flex items-center gap-1.5 px-4 py-1.5 bg-[#D7231A] text-white text-xs font-bold rounded-md hover:bg-red-700 transition-colors">
+                            <a href="mailto:feedback@demo.moveinsync.in" className="flex items-center gap-1.5 px-4 py-1.5 bg-[#D7231A] text-white text-xs font-bold rounded-md hover:bg-red-700 transition-colors">
                                 For Feedback / Complaints <ChevronRight size={12} />
-                            </Link>
+                            </a>
                         </div>
                     </div>
                 </div>

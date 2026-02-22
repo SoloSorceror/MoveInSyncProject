@@ -15,7 +15,6 @@ import { SkeletonCard } from '@/components/Skeleton'
 import { useUIStore } from '@/store/uiStore'
 import metroImage from '@/assets/metroImage.jpg'
 
-/* ── Constants ──────────────────────────────────────────────────── */
 const STATS = [
     { label: 'Network Length (km)', value: '348', icon: Navigation, color: '#D7231A' },
     { label: 'Total Metro Lines', value: '9', icon: Train, color: '#003087' },
@@ -78,7 +77,6 @@ export default function Home() {
         setSelectedRoute
     } = useUIStore()
 
-    // Initialize if empty
     useEffect(() => {
         if (!searchOrigin) setSearchOrigin(DUMMY_STATIONS[0])
         if (!searchDest) setSearchDest(DUMMY_STATIONS[1])
@@ -172,7 +170,7 @@ export default function Home() {
                 <div className="flex-1 bg-[#00873D]" />
             </div>
 
-            {/* ── Hero Banner (replaces giant hero with DMRC-style compact photo banner) */}
+            {/* ── Hero Banner */}
             <div className="relative w-full h-[200px] md:h-[240px] overflow-hidden">
                 <div className="absolute inset-0 bg-cover bg-center" style={{ backgroundImage: `url(${metroImage})` }} />
                 <div className="absolute inset-0 bg-gradient-to-r from-[#003087]/90 via-[#003087]/70 to-[#D7231A]/60" />
@@ -528,7 +526,7 @@ export default function Home() {
                     {/* ── Column 3: Service Updates + Alerts ─────────────── */}
                     <div className="space-y-5">
 
-                        {/* Service Update Box (dark, like DMRC's blue-black box) */}
+                        {/* Service Update Box  */}
                         <motion.div
                             initial={{ opacity: 0, x: 20 }}
                             animate={{ opacity: 1, x: 0 }}

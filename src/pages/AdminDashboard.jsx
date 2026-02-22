@@ -87,9 +87,9 @@ export default function AdminDashboard() {
                             <TicketCheck size={16} className="text-[#D7231A]" />
                             <h2 className="font-black text-gray-800 text-sm">Recent Bookings</h2>
                         </div>
-                        <span className="text-xs font-bold text-[#003087] hover:underline cursor-pointer flex items-center gap-1">
+                        <Link to="/admin" className="text-xs font-bold text-[#003087] hover:underline cursor-pointer flex items-center gap-1">
                             View All <ChevronRight size={12} />
-                        </span>
+                        </Link>
                     </div>
                     <div className="overflow-x-auto">
                         <table className="w-full text-sm">

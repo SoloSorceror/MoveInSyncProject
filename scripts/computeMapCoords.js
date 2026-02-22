@@ -82,6 +82,19 @@ function unrollLineBetween(stations, startName, endName, startPos, endPos) {
     }
 }
 
+
+//what this lines does after the above function does is that ->
+// The script goes through each metro line section by section. For example, for the Yellow Line:
+// It fills stations between Kashmere Gate and Rajiv Chowk.
+// It fills stations between Rajiv Chowk and New Delhi.
+// It sets manual coordinates for the end-of-line stations (Samaypur Badli and HUDA City Centre) and fills the remaining gaps.
+// It repeats this logic for the Blue, Red, Magenta, and Orange lines, ensuring that if two lines share a station (an interchange), they both point to the same coordinate.
+
+
+
+
+
+
 // ── 1. Yellow Line (N-S straight line, x=900)
 // Anchor: Kashmere Gate (y=300) -> Rajiv Chowk (y=600)
 unrollLineBetween(INITIAL_NETWORK[0].stations, 'Kashmere Gate', 'Rajiv Chowk', interchanges['Kashmere Gate'], interchanges['Rajiv Chowk']);

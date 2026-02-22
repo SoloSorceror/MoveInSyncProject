@@ -195,16 +195,16 @@ export default function AdminLines() {
                         <button
                             key={line.id}
                             onClick={() => setActiveLineId(line.id)}
-                            className={`flex justify-between items-center px-4 py-3 rounded-xl font-semibold text-sm transition-all ${activeLineId === line.id
+                            className={`w-full flex justify-between items-center px-4 py-3 rounded-xl font-semibold text-sm transition-all ${activeLineId === line.id
                                 ? 'bg-[#003087] text-white shadow-sm'
                                 : 'text-gray-600 hover:bg-gray-100 bg-gray-50 border border-gray-200'
                                 }`}
                         >
-                            <div className="flex items-center gap-3">
-                                <span className={`w-3 h-3 rounded-full ${line.color}`} />
-                                {line.name}
+                            <div className="flex items-center gap-3 truncate">
+                                <span className={`w-3 h-3 rounded-full flex-shrink-0 ${line.color}`} />
+                                <span className="truncate">{line.name}</span>
                             </div>
-                            <span className={`text-xs px-2 py-0.5 rounded-md font-bold ${activeLineId === line.id ? 'bg-white/20 text-white' : 'bg-gray-200 text-gray-600'}`}>
+                            <span className={`text-xs px-2 py-0.5 rounded-md font-bold flex-shrink-0 ${activeLineId === line.id ? 'bg-white/20 text-white' : 'bg-gray-200 text-gray-600'}`}>
                                 {line.stations.length}
                             </span>
                         </button>

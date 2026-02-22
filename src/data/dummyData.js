@@ -1,4 +1,3 @@
-/* ── Metro Network Graph (used by routeEngine BFS + AdminLines editor) ── */
 export const INITIAL_NETWORK = [
     {
         id: 'yellow', name: 'Yellow Line', color: 'bg-yellow-400',
