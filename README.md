@@ -1,4 +1,4 @@
-# MetroSync - Next-Gen Metro Booking Platform
+# MoveInSyncMetro - Next-Gen Metro Booking Platform
 
 MetroSync is a modern, responsive, and accessible interactive web application designed to simulate a futuristic metro network booking system.
 
